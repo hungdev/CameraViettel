@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "289699507010",
+    "project_id": "cameraviettel-1518260528288"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289699507010:android:ab330d0d38d6749a",
+        "android_client_info": {
+          "package_name": "com.cameraviettel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "289699507010-os4tp96n6ncukufpckdk4s855jbiaus2.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "289699507010-71u4vr2sltr19s59b9e29osmgu03fbcc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cameraviettel",
+            "certificate_hash": "acc3a53d05195d68f9f19f89a7bdb592bbcfa783"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCncCFiSsK4ZQYr7rpHRxv6Y5AQsUgOFw8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
