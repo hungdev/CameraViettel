@@ -7,12 +7,14 @@ import {
 } from 'react-native'
 
 import GoogleSignin from './GoogleSignin'
+import Camera from './Camera'
 
 export default class App extends Component<{}> {
   render() {
     return (
       <View style={styles.container}>
         <GoogleSignin />
+        {/* <Camera /> */}
       </View>
     );
   }
@@ -21,8 +23,8 @@ export default class App extends Component<{}> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
   welcome: {
