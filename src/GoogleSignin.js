@@ -7,6 +7,7 @@ export default class App extends Component {
     GoogleSignin.hasPlayServices({ autoResolve: true })
     GoogleSignin.configure({
       scopes: [
+        'https://www.googleapis.com/auth/drive',
         'https://www.googleapis.com/auth/drive.readonly',
         'https://www.googleapis.com/auth/drive.appdata'
       ],

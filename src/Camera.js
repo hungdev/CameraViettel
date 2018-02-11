@@ -2,8 +2,10 @@ import React from 'react';
 import { Image, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Camera from 'react-native-camera';
 import styles from './styles/styles'
-// import RNFetchBlob from 'react-native-fetch-blob'
-// import base64js from 'base64-js'
+import RNFetchBlob from 'react-native-fetch-blob'
+import base64js from 'base64-js'
+import axios from 'axios'
+import { create } from 'apisauce'
 
 export default class Example extends React.Component {
   constructor(props) {
@@ -24,6 +26,28 @@ export default class Example extends React.Component {
     };
   }
 
+  // componentWillMount() {
+  //   GoogleSignin.hasPlayServices({ autoResolve: true })
+  //   GoogleSignin.configure({
+  //     scopes: [
+  //       'https://www.googleapis.com/auth/drive',
+  //       'https://www.googleapis.com/auth/drive.readonly',
+  //       'https://www.googleapis.com/auth/drive.appdata'
+  //     ],
+  //     iosClientId: '617324734115-od9b4l2mf95331gg9m4u0a4gggq0fpjo.apps.googleusercontent.com',
+  //     webClientId: '289699507010-os4tp96n6ncukufpckdk4s855jbiaus2.apps.googleusercontent.com',  // <= get it on google-services.json
+  //     shouldFetchBasicProfile: true
+  //   })
+  // }
+
+  // handleSigninGoogle() {
+  //   GoogleSignin.signIn().then((user) => {
+  //     console.log(user)
+  //   }).catch((err) => {
+  //     console.log('WRONG SIGNIN', err)
+  //   }).done()
+  // }
+
   takePicture = () => {
     if (this.camera) {
       this.camera
@@ -37,7 +61,7 @@ export default class Example extends React.Component {
     if (this.camera) {
       this.camera
         .capture({ mode: Camera.constants.CaptureMode.video })
-        .then(data => console.log(data))
+        .then(data => this.setState({ path: data.path }))
         .catch(err => console.error(err));
       this.setState({
         isRecording: true,
@@ -124,40 +148,71 @@ export default class Example extends React.Component {
     const fs = RNFetchBlob.fs;
     return fs.readStream(videoFile, 'base64', 1024000);
   }
+  setToken = (token) => api.setHeader('Authorization', 'Bearer ' + token)
+  setHeader = (token, byteBuffers) => ({
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'video/mp4',
+    'Content-Length': byteBuffers.length
+  })
 
-  uploadFile = (token, fileId, encodedData) => {
+  funcUp(encodedData) {
     let byteBuffers = base64js.toByteArray(encodedData);
-    return axios({
-      method: 'patch',
-      url: `https://www.googleapis.com/upload/drive/v3/files/${fileId}`,
+    const token = `ya29.GlxfBc164qanRsTOFWl6X2uExSvEKTR1qIKdl2g4ZazBg_ZxtyK5j79sFQsTalCQ_rKodbF16945VH7wWxO_uia1L1q65MiVC4G_63Jal72lT1szyndcdBxuT-yIug`
+    api = create({
+      baseURL: 'https://www.googleapis.com',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'video/mp4',
         'Content-Length': byteBuffers.length
       },
-      data: byteBuffers,
-    });
+      timeout: 10000
+    })
+    // this.setToken(token)
+    return api.post(`/upload/drive/v3/files/`, { data: byteBuffers })
   };
+  onUpload() {
+    const { path } = this.state
+    this.encodeFile(path)
+      .then((stream) => {
+        let encodedData = '';
+        stream.open();
+        stream.onData((chunk) => {
+          encodedData += chunk;
+        })
+        stream.onEnd(() => {
+          console.log("stream end");
+          this.funcUp(encodedData)
+            .then((response) => {
+              console.log("in post upload: ", response);
+            })
+        })
+      })
+  }
 
-  //https://github.com/wkh237/react-native-fetch-blob/issues/556
-  // upload(fileId) {
-  //   const apiUpload = `https://www.googleapis.com/upload/drive/v3/files/${fileId}`
-  //   RNFetchBlob.fetch('POST', apiUpload, {
-  //     Authorization: 'Bearer ' + token,
-  //     // this is required, otherwise it won't be process as a multipart/form-data request
-  //     'Content-Type': 'multipart/form-data'
-  //   }, [
-  //       // append field data from file path
-  //       {
-  //         name: 'image',
-  //         filename: 'image.jpg',
-  //         type: 'image/jpeg',
-  //         // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
-  //         // Or simply wrap the file path with RNFetchBlob.wrap().
-  //         data: RNFetchBlob.wrap(photo)
-  //       }
-  //     ])
-  // }
+  getFile() {
+    const fileId = "1fZCD09AqOL_eBNMfg4bFS4kcCHqDcm4O"
+    // let byteBuffers = base64js.toByteArray(encodedData);
+    const token = `ya29.GlxfBc164qanRsTOFWl6X2uExSvEKTR1qIKdl2g4ZazBg_ZxtyK5j79sFQsTalCQ_rKodbF16945VH7wWxO_uia1L1q65MiVC4G_63Jal72lT1szyndcdBxuT-yIug`
+    api = create({
+      baseURL: 'https://www.googleapis.com',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      },
+      timeout: 10000
+    })
+    // this.setToken(token)
+    // this.setToken(token)
+    return api.get(`/drive/v3/files/${fileId}?alt=media`)
+  }
+
+  onGetLink() {
+    this.getFile().then((response) => {
+      console.log("data after get: ", response);
+    })
+  }
+
+
   render() {
     const { imageData, isRecording } = this.state
     return (
@@ -189,9 +244,9 @@ export default class Example extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={[styles.overlay, styles.bottomOverlay]}>
-          {/* <TouchableOpacity style={styles.warpPreviewAfter} onPress={()=> alert('aa')}>
+          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.onGetLink()}>
             <Image source={{ uri: imageData && imageData.mediaUri ? imageData.mediaUri : 'http://i.stack.imgur.com/WCveg.jpg' }} style={styles.previewAfterStyle} />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
           {(!this.state.isRecording && (
             <TouchableOpacity style={styles.captureButton} onPress={this.takePicture}>
               <Image source={require('../assets/ic_photo_camera_36pt.png')} />
