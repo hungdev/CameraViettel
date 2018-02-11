@@ -6,8 +6,11 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import base64js from 'base64-js'
 import axios from 'axios'
 import { create } from 'apisauce'
+import {upLoadVideo} from '../actions'
+import { connect } from 'react-redux'
+// import Reactotron from 'reactotron-react-native'
 
-export default class Example extends React.Component {
+class CameraScreen extends React.Component {
   constructor(props) {
     super(props);
 
@@ -26,27 +29,11 @@ export default class Example extends React.Component {
     };
   }
 
-  // componentWillMount() {
-  //   GoogleSignin.hasPlayServices({ autoResolve: true })
-  //   GoogleSignin.configure({
-  //     scopes: [
-  //       'https://www.googleapis.com/auth/drive',
-  //       'https://www.googleapis.com/auth/drive.readonly',
-  //       'https://www.googleapis.com/auth/drive.appdata'
-  //     ],
-  //     iosClientId: '617324734115-od9b4l2mf95331gg9m4u0a4gggq0fpjo.apps.googleusercontent.com',
-  //     webClientId: '289699507010-os4tp96n6ncukufpckdk4s855jbiaus2.apps.googleusercontent.com',  // <= get it on google-services.json
-  //     shouldFetchBasicProfile: true
-  //   })
+  
+  // componentWillMount () {
+  //   Reactotron.log('hello rendering world')
   // }
-
-  // handleSigninGoogle() {
-  //   GoogleSignin.signIn().then((user) => {
-  //     console.log(user)
-  //   }).catch((err) => {
-  //     console.log('WRONG SIGNIN', err)
-  //   }).done()
-  // }
+  
 
   takePicture = () => {
     if (this.camera) {
@@ -155,44 +142,46 @@ export default class Example extends React.Component {
     'Content-Length': byteBuffers.length
   })
 
-  funcUp(encodedData) {
-    let byteBuffers = base64js.toByteArray(encodedData);
-    const token = `ya29.GlxfBc164qanRsTOFWl6X2uExSvEKTR1qIKdl2g4ZazBg_ZxtyK5j79sFQsTalCQ_rKodbF16945VH7wWxO_uia1L1q65MiVC4G_63Jal72lT1szyndcdBxuT-yIug`
-    api = create({
-      baseURL: 'https://www.googleapis.com',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'video/mp4',
-        'Content-Length': byteBuffers.length
-      },
-      timeout: 10000
-    })
-    // this.setToken(token)
-    return api.post(`/upload/drive/v3/files/`, { data: byteBuffers })
-  };
-  onUpload() {
-    const { path } = this.state
-    this.encodeFile(path)
-      .then((stream) => {
-        let encodedData = '';
-        stream.open();
-        stream.onData((chunk) => {
-          encodedData += chunk;
-        })
-        stream.onEnd(() => {
-          console.log("stream end");
-          this.funcUp(encodedData)
-            .then((response) => {
-              console.log("in post upload: ", response);
-            })
-        })
-      })
-  }
+  // funcUp(encodedData) {
+  //   let byteBuffers = base64js.toByteArray(encodedData);
+  //   const token = `ya29.GlxfBc164qanRsTOFWl6X2uExSvEKTR1qIKdl2g4ZazBg_ZxtyK5j79sFQsTalCQ_rKodbF16945VH7wWxO_uia1L1q65MiVC4G_63Jal72lT1szyndcdBxuT-yIug`
+  //   api = create({
+  //     baseURL: 'https://www.googleapis.com',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,
+  //       'Content-Type': 'video/mp4',
+  //       'Content-Length': byteBuffers.length
+  //     },
+  //     timeout: 10000
+  //   })
+  //   // this.setToken(token)
+  //   return api.post(`/upload/drive/v3/files/`, { data: byteBuffers })
+  // };
+  
+  // onUpload() {
+  //   const { path } = this.state
+  //   this.encodeFile(path)
+  //     .then((stream) => {
+  //       let encodedData = '';
+  //       stream.open();
+  //       stream.onData((chunk) => {
+  //         encodedData += chunk;
+  //       })
+  //       stream.onEnd(() => {
+  //         console.log("stream end");
+  //         this.funcUp(encodedData)
+  //           .then((response) => {
+  //             console.log("in post upload: ", response);
+  //           })
+  //       })
+  //     })
+  // }
+  
 
   getFile() {
     const fileId = "1fZCD09AqOL_eBNMfg4bFS4kcCHqDcm4O"
     // let byteBuffers = base64js.toByteArray(encodedData);
-    const token = `ya29.GlxfBc164qanRsTOFWl6X2uExSvEKTR1qIKdl2g4ZazBg_ZxtyK5j79sFQsTalCQ_rKodbF16945VH7wWxO_uia1L1q65MiVC4G_63Jal72lT1szyndcdBxuT-yIug`
+    const token = `ya29.GlxfBebA727JZS7X25eBPTQeahqFxMIJsWBt32BuQWR104XkY48kUZPJpJ7lfEu6f2nUbxv3PNPFxKg-mMP4KQkdJliLKjdmcQFFcmz7XiXrarAlt51u1Q4hpyIqiw`
     api = create({
       baseURL: 'https://www.googleapis.com',
       headers: {
@@ -215,6 +204,7 @@ export default class Example extends React.Component {
 
   render() {
     const { imageData, isRecording } = this.state
+    const token ="ya29.GlxfBebA727JZS7X25eBPTQeahqFxMIJsWBt32BuQWR104XkY48kUZPJpJ7lfEu6f2nUbxv3PNPFxKg-mMP4KQkdJliLKjdmcQFFcmz7XiXrarAlt51u1Q4hpyIqiw"
     return (
       <View style={styles.container}>
         <StatusBar animated hidden />
@@ -244,7 +234,7 @@ export default class Example extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={[styles.overlay, styles.bottomOverlay]}>
-          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.onGetLink()}>
+          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.props.onUpVideo(token, this.state.path)}>
             <Image source={{ uri: imageData && imageData.mediaUri ? imageData.mediaUri : 'http://i.stack.imgur.com/WCveg.jpg' }} style={styles.previewAfterStyle} />
           </TouchableOpacity>
           {(!this.state.isRecording && (
@@ -268,3 +258,17 @@ export default class Example extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    // token = state.accountReducer
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onUpVideo: (token, video) => { dispatch(upLoadVideo(token, video)) }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CameraScreen)

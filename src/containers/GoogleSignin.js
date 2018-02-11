@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
+import { connect } from 'react-redux'
+import Reactotron from 'reactotron-react-native'
 
-export default class App extends Component {
+class GoogleSignIn extends Component {
   componentWillMount () {
     GoogleSignin.hasPlayServices({ autoResolve: true })
     GoogleSignin.configure({
@@ -30,6 +32,7 @@ export default class App extends Component {
   handleSigninGoogle () {
     GoogleSignin.signIn().then((user) => {
       console.log(user)
+      Reactotron.log(user)
     }).catch((err) => {
       console.log('WRONG SIGNIN', err)
     }).done()
@@ -56,3 +59,18 @@ const styles = StyleSheet.create({
     color: '#FFF'
   }
 })
+
+const mapStateToProps = (state) => {
+  return {
+    pin: state.pinReducer
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onFetchPin: () => { dispatch(fetchPinAction()) },
+    onUpdatePin: (pin) => { dispatch(updateItemAction(pin)) }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GoogleSignIn)
