@@ -1,4 +1,4 @@
-import { SET_TOKEN, UP_VIDEO, UP_SUCCEEDED } from '../actions/actionTypes'
+import { SET_TOKEN, UP_VIDEO, UP_SUCCEEDED, UP_FAILED } from '../actions/actionTypes'
 
 import { put, takeLatest, call } from 'redux-saga/effects'
 import { Api } from './Api'
@@ -8,12 +8,12 @@ function * upVideo (action) {
   try {
     const response = yield call(Api.upVideoFromApi, action.token, action.video)
     if (response.ok) {
-      Reactotron.log('call res')
-      console.log('response')
-      console.log(response)
+      // Reactotron.log('call res')
+      // console.log('response')
+      // console.log(response)
       yield put({ type: UP_SUCCEEDED, video: response.data })
     } else {
-      Reactotron.log('nothing')
+      yield put({ type: UP_FAILED, video: response.data })
     }
   } catch (error) {
     Reactotron.log(`Error = ${error}`)

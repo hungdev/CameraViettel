@@ -12,6 +12,7 @@ import Google from './GoogleSignin'
 //Redux saga
 import createSagaMiddleware from 'redux-saga';
 import rootSaga from '../sagas/rootSaga'; 
+import AppNavigation from '../navigation/AppNavigation'
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -22,7 +23,8 @@ export default class App extends Component<{}> {
     return (
       <Provider store={store}>
         {/* <Google /> */}
-        <Camera />
+        {/* <Camera /> */}
+        <AppNavigation />
     </Provider>
     );
   }

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Platform } from 'react-native'
 // import { Colors, Metrics, Fonts } from '../../Themes/'
 
 export default StyleSheet.create({
@@ -55,5 +55,30 @@ export default StyleSheet.create({
     height: 60,
     width: 60
 
+  },
+  // modal
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    // alignSelf: 'center',
+    height: 470,
+    width: 300
+  },
+  previewBigStyle: {
+    height: 400,
+    width: 300
+  },
+  // button
+  buttonStyle: {
+    padding: 8,
+    paddingLeft: 15,
+    paddingRight: 15,
+    backgroundColor: '#F00',
+    borderRadius: 5
+  },
+  textButtonStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFF'
   }
 })

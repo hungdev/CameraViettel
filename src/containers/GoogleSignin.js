@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
+import { setToken } from '../actions'
 
 class GoogleSignIn extends Component {
   componentWillMount () {
@@ -29,13 +30,17 @@ class GoogleSignIn extends Component {
     )
   }
 
-  handleSigninGoogle () {
-    GoogleSignin.signIn().then((user) => {
-      console.log(user)
-      Reactotron.log(user)
-    }).catch((err) => {
-      console.log('WRONG SIGNIN', err)
-    }).done()
+  async handleSigninGoogle () {
+    try {
+      await GoogleSignin.signIn().then((user) => {
+        // console.log(user)
+        Reactotron.log(user)
+        this.props.setToken(user.accessToken)
+      })
+      await this.props.navigation.navigate('CameraScreen')
+    } catch (error) {
+      Reactotron.log(`Error = ${error}`)
+    }
   }
 }
 
@@ -62,14 +67,13 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    pin: state.pinReducer
+    // pin: state.pinReducer
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchPin: () => { dispatch(fetchPinAction()) },
-    onUpdatePin: (pin) => { dispatch(updateItemAction(pin)) }
+    setToken: (token) => { dispatch(setToken(token)) }
   }
 }
 
