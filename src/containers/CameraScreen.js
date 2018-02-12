@@ -12,6 +12,7 @@ import Reactotron from 'reactotron-react-native'
 // import Modal from "react-native-modal"
 import Modal from 'react-native-modalbox'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 class CameraScreen extends React.Component {
   constructor(props) {
@@ -28,7 +29,8 @@ class CameraScreen extends React.Component {
       isRecording: false,
       imageData: '',
       isModalVisible: false,
-      isModalLogin: false
+      isModalLogin: false,
+      isLoading: false
     };
   }
 
@@ -55,11 +57,11 @@ class CameraScreen extends React.Component {
       Reactotron.log(newProps.videoData)
       if (newProps.videoData.error && newProps.videoData.error.message === 'Invalid Credentials') {
         // alert('please login')
-        this.setState({ failedLogin: true, isModalLogin: true })
+        this.setState({ failedLogin: true, isModalLogin: true , isLoading: false})
       }
       if (newProps.videoData && newProps.videoData.id) {
+        this.setState({ videoData: newProps.videoData, isLoading: false })
         alert(`Upload success \n with id video: ${newProps.videoData.id} \n name: ${newProps.videoData.name}`)
-        this.setState({ videoData: newProps.videoData })
       }
     }
   }
@@ -164,12 +166,13 @@ class CameraScreen extends React.Component {
 
 
   async handleSigninGoogle() {
+    this.setState({isLoading: true})
     try {
       await GoogleSignin.signIn().then((user) => {
         // console.log(user)
         // Reactotron.log(user)
         this.props.setAccount(user)
-        this.setState({ isModalLogin: false, token: user.accessToken })
+        this.setState({ isModalLogin: false, token: user.accessToken, isLoading: false })
       })
       // await this.props.navigation.navigate('CameraScreen')
     } catch (error) {
@@ -179,7 +182,7 @@ class CameraScreen extends React.Component {
 
 
   onSharePress(token) {
-    this.setState({ isModalVisible: false })
+    this.setState({ isModalVisible: false, isLoading: true })
     this.props.onUpVideo(token, this.state.path)
   }
   
@@ -195,6 +198,7 @@ class CameraScreen extends React.Component {
     // const token = "ya29.GlxfBSrVOGazs4pcSGGygImUZx1mft1xWjbF76feKHdcbe94NORCpn_-_-_2sM_ooVzfugCwib5jyh-zSiXkQWw5eSmmdOFHCs4vvlg5ny_JpSJRyDNnup5-SHo9aw"
     return (
       <View style={styles.container}>
+      <Spinner visible={this.state.isLoading} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
         <StatusBar animated hidden />
         <Camera
           ref={cam => {
@@ -222,9 +226,7 @@ class CameraScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={[styles.overlay, styles.bottomOverlay]}>
-          {/* <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.props.onUpVideo(token, this.state.path)}> */}
           <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.onPressPreview()}>
-            {/* <Image source={{ uri: imageData && imageData.mediaUri ? imageData.mediaUri : 'http://i.stack.imgur.com/WCveg.jpg' }} style={styles.previewAfterStyle} /> */}
             <Image
               source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')}
               style={styles.previewAfterStyle} />
@@ -246,11 +248,9 @@ class CameraScreen extends React.Component {
               </TouchableOpacity>
             )}
         </View>
-        <Modal style={[styles.modal]}
+        <Modal style={styles.modal}
           position={"center"}
-          // isOpen={this.state.isModalVisible}>
           isOpen={this.state.isModalVisible}>
-          {/* <Text style={styles.text}>Modal centered</Text> */}
           <View style={{ flex: 1 }}>
             <Image source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')} style={styles.previewBigStyle} />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>

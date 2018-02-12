@@ -1,17 +1,20 @@
-import { StyleSheet, Platform } from 'react-native'
+import { StyleSheet, Platform, Dimensions} from 'react-native'
 // import { Colors, Metrics, Fonts } from '../../Themes/'
-
+const { width, height } = Dimensions.get('window')
 export default StyleSheet.create({
   container: {
     // marginTop: 60,
-    flex: 1,
+    // flex: 1,
     // justifyContent: 'center',
-    alignItems: 'center'
+    // alignItems: 'center'
   },
   warpInfo: {
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 70
+    marginTop: 70,
+    // borderWidth: 1,
+    height: height,
+    width: width
   },
   avatar: {
     height: 80,
@@ -20,13 +23,16 @@ export default StyleSheet.create({
   },
   rowStyle: {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: width,
+    marginTop: 10
+    // borderWidth: 1
     // alignItems: 'center'
   },
 
   btnLogout: {
     borderWidth: 1,
-    marginTop: 10,
+    marginTop: 20,
     width: 150,
     justifyContent: 'center',
     alignItems: 'center',
