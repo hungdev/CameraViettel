@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, StatusBar } from 'reac
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
-import { setToken, setAccount } from '../actions'
+import { setToken, setAccount, setLogout} from '../actions'
 import styles from './styles/GoogleSigninStyle'
 import Modal from 'react-native-modalbox'
 
@@ -20,7 +20,7 @@ class GoogleSignIn extends Component {
       if (!this.props.account.accessToken) {
         this.setState({ isModalLogin: true })
       }
-    }, 1000)
+    }, 500)
     GoogleSignin.hasPlayServices({ autoResolve: true })
     GoogleSignin.configure({
       scopes: [
@@ -34,22 +34,31 @@ class GoogleSignIn extends Component {
     })
   }
 
+  onLogOut () {
+    this.props.setLogout()
+    this.setState({isModalLogin: true})
+  }
+
   render () {
     const { account } = this.props
-    return (
+    return account && (
       <View style={styles.container}>
         <StatusBar animated hidden />
         <View style={styles.warpInfo}>
           <Image source={{ uri: account.photo }} style={styles.avatar} />
-          <Text>{account.name}</Text>
+          <View style={styles.rowStyle}>
+            <Text>Name:</Text>
+            <Text>{account.name}</Text>
+          </View>
           <Text>{account.email}</Text>
-          <TouchableOpacity style={styles.btnLogout} onPress={() => alert('11')}>
+          <TouchableOpacity style={styles.btnLogout} onPress={() => this.onLogOut()}>
             <Text style={styles.txtLogout}>Logout</Text>
           </TouchableOpacity>
         </View>
         <Modal
           style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}
           position={'center'}
+          // isOpen={false}>
           isOpen={this.state.isModalLogin}>
           <View style={{ flex: 1, justifyContent: 'center' }}>
             <View style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
@@ -85,7 +94,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setAccount: (account) => { dispatch(setAccount(account)) }
+    setAccount: (account) => { dispatch(setAccount(account)) },
+    setLogout: () => { dispatch(setLogout()) }
   }
 }
 

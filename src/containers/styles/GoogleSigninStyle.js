@@ -16,16 +16,27 @@ export default StyleSheet.create({
   avatar: {
     height: 80,
     width: 80,
-    borderWidth: 1,
     borderRadius: 40
   },
+  rowStyle: {
+    flexDirection: 'row',
+    justifyContent: 'center'
+    // alignItems: 'center'
+  },
+
   btnLogout: {
     borderWidth: 1,
-    marginTop: 10
+    marginTop: 10,
+    width: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    backgroundColor: '#9ee59f',
+    borderColor: 'grey'
   },
   txtLogout: {
     padding: 15,
-    color: 'red'
+    color: 'white'
   },
 
   // modal

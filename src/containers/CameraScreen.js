@@ -182,6 +182,13 @@ class CameraScreen extends React.Component {
     this.setState({ isModalVisible: false })
     this.props.onUpVideo(token, this.state.path)
   }
+  
+  onPressPreview () {
+    const {path, isModalVisible} = this.state
+    if (path) {
+      this.setState({ isModalVisible: !isModalVisible })
+    } else alert ('Please Record Video!')
+  }
 
   render() {
     const { imageData, isRecording, isModalVisible } = this.state
@@ -216,8 +223,11 @@ class CameraScreen extends React.Component {
         </View>
         <View style={[styles.overlay, styles.bottomOverlay]}>
           {/* <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.props.onUpVideo(token, this.state.path)}> */}
-          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.setState({ isModalVisible: !isModalVisible })}>
-            <Image source={{ uri: imageData && imageData.mediaUri ? imageData.mediaUri : 'http://i.stack.imgur.com/WCveg.jpg' }} style={styles.previewAfterStyle} />
+          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.onPressPreview()}>
+            {/* <Image source={{ uri: imageData && imageData.mediaUri ? imageData.mediaUri : 'http://i.stack.imgur.com/WCveg.jpg' }} style={styles.previewAfterStyle} /> */}
+            <Image
+              source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')}
+              style={styles.previewAfterStyle} />
           </TouchableOpacity>
           {(!this.state.isRecording && (
             <TouchableOpacity style={styles.captureButton} onPress={this.takePicture}>
@@ -242,7 +252,7 @@ class CameraScreen extends React.Component {
           isOpen={this.state.isModalVisible}>
           {/* <Text style={styles.text}>Modal centered</Text> */}
           <View style={{ flex: 1 }}>
-            <Image source={{ uri: imageData && imageData.mediaUri ? imageData.mediaUri : 'http://i.stack.imgur.com/WCveg.jpg' }} style={styles.previewBigStyle} />
+            <Image source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')} style={styles.previewBigStyle} />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
               <TouchableOpacity onPress={() => this.onSharePress(this.state.token)}>
                 <Image source={require('../assets/icShare.png')} style={{ height: 70, width: 70 }} />
