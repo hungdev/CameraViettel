@@ -28,7 +28,7 @@ class GoogleSignIn extends Component {
         'https://www.googleapis.com/auth/drive.readonly',
         'https://www.googleapis.com/auth/drive.appdata'
       ],
-      iosClientId: '617324734115-od9b4l2mf95331gg9m4u0a4gggq0fpjo.apps.googleusercontent.com',
+      iosClientId: '289699507010-vuegtvgmi10s5es4i2iou4ifbakeqdae.apps.googleusercontent.com',
       webClientId: '289699507010-os4tp96n6ncukufpckdk4s855jbiaus2.apps.googleusercontent.com',  // <= get it on google-services.json
       shouldFetchBasicProfile: true
     })
