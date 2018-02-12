@@ -252,13 +252,17 @@ class CameraScreen extends React.Component {
           position={"center"}
           isOpen={this.state.isModalVisible}>
           <View style={{ flex: 1 }}>
-            <Image source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')} style={styles.previewBigStyle} />
+            <Image 
+            source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')} 
+            style={styles.previewBigStyle} 
+            resizeMode='contain'
+            />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
               <TouchableOpacity onPress={() => this.onSharePress(this.state.token)}>
-                <Image source={require('../assets/icShare.png')} style={{ height: 70, width: 70 }} />
+                <Image source={require('../assets/icShare.png')} style={{ height: 50, width: 50 }} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.setState({ isModalVisible: false })}>
-                <Image source={require('../assets/icCancel.png')} style={{ height: 70, width: 70 }} />
+                <Image source={require('../assets/icCancel.png')} style={{ height: 50, width: 50 }} />
               </TouchableOpacity>
             </View>
           </View>

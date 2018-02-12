@@ -20,7 +20,7 @@ class GoogleSignIn extends Component {
       if (!this.props.account.accessToken) {
         this.setState({ isModalLogin: true })
       }
-    }, 500)
+    }, 700)
     GoogleSignin.hasPlayServices({ autoResolve: true })
     GoogleSignin.configure({
       scopes: [
