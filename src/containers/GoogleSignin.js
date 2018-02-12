@@ -1,12 +1,26 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image, StatusBar } from 'react-native'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
-import { setToken } from '../actions'
+import { setToken, setAccount } from '../actions'
+import styles from './styles/GoogleSigninStyle'
+import Modal from 'react-native-modalbox'
 
 class GoogleSignIn extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      isModalLogin: false
+    }
+  }
+
   componentWillMount () {
+    setTimeout(() => {
+      if (!this.props.account.accessToken) {
+        this.setState({ isModalLogin: true })
+      }
+    }, 1000)
     GoogleSignin.hasPlayServices({ autoResolve: true })
     GoogleSignin.configure({
       scopes: [
@@ -21,11 +35,30 @@ class GoogleSignIn extends Component {
   }
 
   render () {
+    const { account } = this.props
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.buttonStyle} onPress={() => this.handleSigninGoogle()}>
-          <Text style={styles.textButtonStyle}>Sign in with Google +</Text>
-        </TouchableOpacity>
+        <StatusBar animated hidden />
+        <View style={styles.warpInfo}>
+          <Image source={{ uri: account.photo }} style={styles.avatar} />
+          <Text>{account.name}</Text>
+          <Text>{account.email}</Text>
+          <TouchableOpacity style={styles.btnLogout} onPress={() => alert('11')}>
+            <Text style={styles.txtLogout}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+        <Modal
+          style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}
+          position={'center'}
+          isOpen={this.state.isModalLogin}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+              <TouchableOpacity style={styles.buttonStyle} onPress={() => this.handleSigninGoogle()}>
+                <Text style={styles.textButtonStyle}>Sign in with Google +</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     )
   }
@@ -33,47 +66,26 @@ class GoogleSignIn extends Component {
   async handleSigninGoogle () {
     try {
       await GoogleSignin.signIn().then((user) => {
-        // console.log(user)
-        Reactotron.log(user)
-        this.props.setToken(user.accessToken)
+        this.props.setAccount(user)
+        this.setState({ isModalLogin: false })
       })
-      await this.props.navigation.navigate('CameraScreen')
+      // await this.props.navigation.navigate('CameraScreen')
     } catch (error) {
       Reactotron.log(`Error = ${error}`)
     }
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF'
-  },
-  buttonStyle: {
-    padding: 8,
-    paddingLeft: 15,
-    paddingRight: 15,
-    backgroundColor: '#F00',
-    borderRadius: 5
-  },
-  textButtonStyle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFF'
-  }
-})
-
 const mapStateToProps = (state) => {
   return {
-    // pin: state.pinReducer
+    account: state.accountReducer,
+    videoData: state.videoReducer
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setToken: (token) => { dispatch(setToken(token)) }
+    setAccount: (account) => { dispatch(setAccount(account)) }
   }
 }
 

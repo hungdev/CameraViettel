@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import base64js from 'base64-js'
 import axios from 'axios'
 import { create } from 'apisauce'
-import { upLoadVideo } from '../actions'
+import { upLoadVideo, setAccount } from '../actions'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
 // import Modal from "react-native-modal"
@@ -34,6 +34,9 @@ class CameraScreen extends React.Component {
 
 
   componentWillMount() {
+    if (!this.props.account.accessToken) {
+      this.setState({ isModalLogin: true })
+    }
     GoogleSignin.hasPlayServices({ autoResolve: true })
     GoogleSignin.configure({
       scopes: [
@@ -54,8 +57,7 @@ class CameraScreen extends React.Component {
         // alert('please login')
         this.setState({ failedLogin: true, isModalLogin: true })
       }
-      else {
-        this.setState({ isModalVisible: false })
+      if (newProps.videoData && newProps.videoData.id) {
         alert(`Upload success \n with id video: ${newProps.videoData.id} \n name: ${newProps.videoData.name}`)
         this.setState({ videoData: newProps.videoData })
       }
@@ -159,48 +161,6 @@ class CameraScreen extends React.Component {
   }
 
 
-  // onUpload() {
-  //   const { path } = this.state
-  //   this.encodeFile(path)
-  //     .then((stream) => {
-  //       let encodedData = '';
-  //       stream.open();
-  //       stream.onData((chunk) => {
-  //         encodedData += chunk;
-  //       })
-  //       stream.onEnd(() => {
-  //         console.log("stream end");
-  //         this.funcUp(encodedData)
-  //           .then((response) => {
-  //             console.log("in post upload: ", response);
-  //           })
-  //       })
-  //     })
-  // }
-
-
-  // getFile() {
-  //   const fileId = "1fZCD09AqOL_eBNMfg4bFS4kcCHqDcm4O"
-  //   // let byteBuffers = base64js.toByteArray(encodedData);
-  //   const token = `ya29.GlxfBebA727JZS7X25eBPTQeahqFxMIJsWBt32BuQWR104XkY48kUZPJpJ7lfEu6f2nUbxv3PNPFxKg-mMP4KQkdJliLKjdmcQFFcmz7XiXrarAlt51u1Q4hpyIqiw`
-  //   api = create({
-  //     baseURL: 'https://www.googleapis.com',
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`,
-  //       'Accept': 'application/json'
-  //     },
-  //     timeout: 10000
-  //   })
-  //   // this.setToken(token)
-  //   // this.setToken(token)
-  //   return api.get(`/drive/v3/files/${fileId}?alt=media`)
-  // }
-
-  // onGetLink() {
-  //   this.getFile().then((response) => {
-  //     console.log("data after get: ", response);
-  //   })
-  // }
 
 
   async handleSigninGoogle() {
@@ -208,8 +168,8 @@ class CameraScreen extends React.Component {
       await GoogleSignin.signIn().then((user) => {
         // console.log(user)
         // Reactotron.log(user)
-        // this.props.setToken(user.accessToken)
-        this.setState({ token: user.accessToken, isModalLogin: false, isModalVisible: true })
+        this.props.setAccount(user)
+        this.setState({ isModalLogin: false, token: user.accessToken })
       })
       // await this.props.navigation.navigate('CameraScreen')
     } catch (error) {
@@ -224,7 +184,7 @@ class CameraScreen extends React.Component {
   }
 
   render() {
-    const { imageData, isRecording } = this.state
+    const { imageData, isRecording, isModalVisible } = this.state
     // const token = "ya29.GlxfBSrVOGazs4pcSGGygImUZx1mft1xWjbF76feKHdcbe94NORCpn_-_-_2sM_ooVzfugCwib5jyh-zSiXkQWw5eSmmdOFHCs4vvlg5ny_JpSJRyDNnup5-SHo9aw"
     return (
       <View style={styles.container}>
@@ -256,7 +216,7 @@ class CameraScreen extends React.Component {
         </View>
         <View style={[styles.overlay, styles.bottomOverlay]}>
           {/* <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.props.onUpVideo(token, this.state.path)}> */}
-          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.setState({ isModalVisible: true })}>
+          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.setState({ isModalVisible: !isModalVisible })}>
             <Image source={{ uri: imageData && imageData.mediaUri ? imageData.mediaUri : 'http://i.stack.imgur.com/WCveg.jpg' }} style={styles.previewAfterStyle} />
           </TouchableOpacity>
           {(!this.state.isRecording && (
@@ -293,6 +253,7 @@ class CameraScreen extends React.Component {
             </View>
           </View>
         </Modal>
+
         <Modal
           style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}
           position={"center"}
@@ -305,6 +266,7 @@ class CameraScreen extends React.Component {
             </View>
           </View>
         </Modal>
+
       </View>
     );
   }
@@ -312,14 +274,15 @@ class CameraScreen extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    token: state.accountReducer,
+    account: state.accountReducer,
     videoData: state.videoReducer
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUpVideo: (token, video) => { dispatch(upLoadVideo(token, video)) }
+    onUpVideo: (token, video) => { dispatch(upLoadVideo(token, video)) },
+    setAccount: (account) => { dispatch(setAccount(account)) }
   }
 }
 

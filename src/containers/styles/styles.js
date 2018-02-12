@@ -80,5 +80,24 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFF'
+  },
+  // Signin Button
+  containerSignIn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF'
+  },
+  buttonSignInStyle: {
+    padding: 8,
+    paddingLeft: 15,
+    paddingRight: 15,
+    backgroundColor: '#F00',
+    borderRadius: 5
+  },
+  textButtonSignInStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFF'
   }
 })
