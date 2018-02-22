@@ -1,6 +1,6 @@
 import RNFetchBlob from 'react-native-fetch-blob'
 import Reactotron from 'reactotron-react-native'
-
+// docs: https://developers.google.com/drive/v3/reference/files/update
 function upVideoFromApi (token, video) {
   return RNFetchBlob.fetch('POST', 'https://www.googleapis.com/upload/drive/v3/files', {
     Authorization: `Bearer ${token}`,
@@ -12,7 +12,7 @@ function upVideoFromApi (token, video) {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       }, JSON.stringify({
-        name: 'BachNX.mp4'
+        name: 'MyVideo.mp4'
       }))
     })
     .then((resp) => {

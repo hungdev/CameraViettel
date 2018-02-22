@@ -57,6 +57,7 @@ class GoogleSignIn extends Component {
         </View>
         <Modal
           style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}
+          swipeToClose={false}
           position={'center'}
           isOpen={this.state.isModalLogin}>
           <View style={{ flex: 1, justifyContent: 'center' }}>

@@ -57,7 +57,7 @@ class CameraScreen extends React.Component {
       Reactotron.log(newProps.videoData)
       if (newProps.videoData.error && newProps.videoData.error.message === 'Invalid Credentials') {
         // alert('please login')
-        this.setState({ failedLogin: true, isModalLogin: true , isLoading: false})
+        this.setState({ failedLogin: true, isModalLogin: true, isLoading: false })
       }
       if (newProps.videoData && newProps.videoData.id) {
         this.setState({ videoData: newProps.videoData, isLoading: false })
@@ -166,7 +166,7 @@ class CameraScreen extends React.Component {
 
 
   async handleSigninGoogle() {
-    this.setState({isLoading: true})
+    this.setState({ isLoading: true })
     try {
       await GoogleSignin.signIn().then((user) => {
         // console.log(user)
@@ -185,12 +185,12 @@ class CameraScreen extends React.Component {
     this.setState({ isModalVisible: false, isLoading: true })
     this.props.onUpVideo(token, this.state.path)
   }
-  
-  onPressPreview () {
-    const {path, isModalVisible} = this.state
+
+  onPressPreview() {
+    const { path, isModalVisible } = this.state
     if (path) {
       this.setState({ isModalVisible: !isModalVisible })
-    } else alert ('Please Record Video!')
+    } else alert('Please Record Video!')
   }
 
   render() {
@@ -198,7 +198,7 @@ class CameraScreen extends React.Component {
     // const token = "ya29.GlxfBSrVOGazs4pcSGGygImUZx1mft1xWjbF76feKHdcbe94NORCpn_-_-_2sM_ooVzfugCwib5jyh-zSiXkQWw5eSmmdOFHCs4vvlg5ny_JpSJRyDNnup5-SHo9aw"
     return (
       <View style={styles.container}>
-      <Spinner visible={this.state.isLoading} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
+        <Spinner visible={this.state.isLoading} textContent={"Loading..."} textStyle={{ color: '#FFF' }} />
         <StatusBar animated hidden />
         <Camera
           ref={cam => {
@@ -250,12 +250,13 @@ class CameraScreen extends React.Component {
         </View>
         <Modal style={styles.modal}
           position={"center"}
+          swipeToClose={false}
           isOpen={this.state.isModalVisible}>
           <View style={{ flex: 1 }}>
-            <Image 
-            source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')} 
-            style={styles.previewBigStyle} 
-            resizeMode='contain'
+            <Image
+              source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')}
+              style={styles.previewBigStyle}
+              resizeMode='contain'
             />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
               <TouchableOpacity onPress={() => this.onSharePress(this.state.token)}>
@@ -270,6 +271,7 @@ class CameraScreen extends React.Component {
 
         <Modal
           style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}
+          swipeToClose={false}
           position={"center"}
           isOpen={this.state.isModalLogin}>
           <View style={{ flex: 1, justifyContent: 'center' }}>
