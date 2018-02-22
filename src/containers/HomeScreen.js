@@ -41,6 +41,7 @@ class HomeScreen extends Component {
         <ScrollableTabView
           tabBarPosition='bottom'
           locked
+          // prerenderingSiblingsNumber={Infinity}
           initialPage={0}
           renderTabBar={() => <HomeTabBar />}
           onChangeTab={(tab) => this.onChangeTab(tab)}
