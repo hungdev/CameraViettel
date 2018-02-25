@@ -1,4 +1,4 @@
-import { StyleSheet, Platform, Dimensions} from 'react-native'
+import { StyleSheet, Platform, Dimensions } from 'react-native'
 // import { Colors, Metrics, Fonts } from '../../Themes/'
 const { width, height } = Dimensions.get('window')
 export default StyleSheet.create({
@@ -11,10 +11,59 @@ export default StyleSheet.create({
   warpInfo: {
     // justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 70,
+    // paddingTop: 70,
     // borderWidth: 1,
     height: height,
     width: width
+  },
+  warpHeader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#4283f4',
+    paddingTop: 70,
+    paddingBottom: 30
+  },
+  warpContent: {
+    width: width,
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: 'grey',
+    paddingTop: 20
+  },
+  rowContent: {
+    flexDirection: 'row'
+  },
+  txtLabel: {
+    flex: 3,
+    borderWidth: 1,
+    textAlign: 'center',
+    borderRightWidth: 0,
+    borderColor: '#BBB',
+    paddingVertical: 10
+    // color: '#4283f4'
+  },
+  txtValue: {
+    flex: 7,
+    borderWidth: 1,
+    borderColor: '#BBB',
+    paddingLeft: 20,
+    paddingVertical: 10
+  },
+  iconClipboard: {
+    height: 30,
+    width: 30
+  },
+  txtHeader: {
+    color: 'white'
+  },
+  warpRowPath: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 7,
+    borderWidth: 1,
+    borderColor: '#BBB',
+    paddingLeft: 20,
+    paddingVertical: 10
   },
   avatar: {
     height: 80,
@@ -29,7 +78,6 @@ export default StyleSheet.create({
     // borderWidth: 1
     // alignItems: 'center'
   },
-
   btnLogout: {
     borderWidth: 1,
     marginTop: 20,

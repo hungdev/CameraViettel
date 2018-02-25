@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Image, StatusBar } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image, StatusBar, Clipboard } from 'react-native'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
-import { setToken, setAccount, setLogout} from '../actions'
+import { setToken, setAccount, setLogout } from '../actions'
 import styles from './styles/GoogleSigninStyle'
 import Modal from 'react-native-modalbox'
+import Toast from 'react-native-root-toast'
 
 class GoogleSignIn extends Component {
   constructor (props) {
@@ -36,21 +37,66 @@ class GoogleSignIn extends Component {
 
   onLogOut () {
     this.props.setLogout()
-    this.setState({isModalLogin: true})
+    this.setState({ isModalLogin: true })
+  }
+  // https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing
+  onClipboard () {
+    Clipboard.setString('https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing')
+    let toast = Toast.show('Link copied', {
+      duration: Toast.durations.LONG,
+      position: Toast.positions.CENTER,
+      shadow: true,
+      animation: true,
+      hideOnPress: true,
+      delay: 0,
+      onShow: () => {
+        // calls on toast\`s appear animation start
+      },
+      onShown: () => {
+        // calls on toast\`s appear animation end.
+      },
+      onHide: () => {
+        // calls on toast\`s hide animation start.
+      },
+      onHidden: () => {
+        // calls on toast\`s hide animation end.
+      }
+    })
+
+    // You can manually hide the Toast, or it will automatically disappear after a `duration` ms timeout.
+    setTimeout(function () {
+      Toast.hide(toast)
+    }, 1000)
   }
 
   render () {
     const { account } = this.props
     return account && (
       <View style={styles.container}>
-        <StatusBar animated hidden />
+        {/* <StatusBar animated hidden /> */}
         <View style={styles.warpInfo}>
-          <Image source={{ uri: account.photo }} style={styles.avatar} />
-          <View style={styles.rowStyle}>
-            <Text>Name:</Text>
-            <Text>{account.name}</Text>
+          <View style={styles.warpHeader}>
+            <Image source={{ uri: account.photo }} style={styles.avatar} />
+            <View style={styles.rowStyle}>
+              <Text style={styles.txtHeader}>{account.name.charAt(0).toUpperCase() + account.name.slice(1)}</Text>
+            </View>
+            <Text style={styles.txtHeader}>{account.email}</Text>
           </View>
-          <Text>{account.email}</Text>
+          <View style={styles.warpContent}>
+            <View style={styles.rowContent}>
+              <Text style={styles.txtLabel}>Folder name</Text>
+              <Text style={styles.txtValue}>Viettel</Text>
+            </View>
+            <View style={styles.rowContent}>
+              <Text style={styles.txtLabel}>Path</Text>
+              <View style={styles.warpRowPath}>
+                <Text style={{ flex: 1 }}>https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing</Text>
+                <TouchableOpacity onPress={() => this.onClipboard()}>
+                  <Image source={require('../assets/clipboard.png')} style={styles.iconClipboard} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
           <TouchableOpacity style={styles.btnLogout} onPress={() => this.onLogOut()}>
             <Text style={styles.txtLogout}>Logout</Text>
           </TouchableOpacity>
