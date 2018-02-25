@@ -35,6 +35,15 @@ class GoogleSignIn extends Component {
     })
   }
 
+  componentWillReceiveProps (newProps) {
+    Reactotron.log('newProps111')
+    Reactotron.log(newProps)
+    if (newProps && newProps.account.length !== 0) {
+      this.setState({isModalLogin: false})
+    }
+    // if(newProps && newProps)
+  }
+
   onLogOut () {
     this.props.setLogout()
     this.setState({ isModalLogin: true })

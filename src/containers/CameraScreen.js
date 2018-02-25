@@ -35,6 +35,9 @@ class CameraScreen extends React.Component {
     };
   }
 
+  openLog() {
+    alert('ahhh')
+  }
 
   componentWillMount() {
     if (!this.props.account.accessToken) {
@@ -54,8 +57,12 @@ class CameraScreen extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
+    Reactotron.log(newProps)
+    if (newProps && newProps.account.length === 0) {
+      this.setState({isModalLogin: true})
+    }
     if (newProps && newProps.videoData) {
-      Reactotron.log(newProps.videoData)
+      // Reactotron.log(newProps.videoData)
       if (newProps.videoData.error && newProps.videoData.error.message === 'Invalid Credentials') {
         // alert('please login')
         this.setState({ failedLogin: true, isModalLogin: true, isLoading: false })
@@ -88,9 +95,9 @@ class CameraScreen extends React.Component {
     }
   };
 
-  getThumbnailVideo (filepath) {
+  getThumbnailVideo(filepath) {
     RNThumbnail.get(filepath).then((result) => {
-      return this.setState({thumbnailVideo: result.path})
+      return this.setState({ thumbnailVideo: result.path })
       // Reactotron.log('result.path'); // thumbnail path
       // Reactotron.log(result.path); // thumbnail path
     })
@@ -237,7 +244,7 @@ class CameraScreen extends React.Component {
         <View style={[styles.overlay, styles.bottomOverlay]}>
           <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.onPressPreview()}>
             <Image
-              source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo} : require('../assets/icVideoColor.png')}
+              source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : require('../assets/icVideoColor.png')}
               style={styles.previewAfterStyle} />
           </TouchableOpacity>
           {(!this.state.isRecording && (
@@ -263,7 +270,7 @@ class CameraScreen extends React.Component {
           isOpen={this.state.isModalVisible}>
           <View style={{ flex: 1 }}>
             <Image
-              source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo} : require('../assets/icVideoColor.png')}
+              source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : require('../assets/icVideoColor.png')}
               style={styles.previewBigStyle}
               resizeMode='contain'
             />
