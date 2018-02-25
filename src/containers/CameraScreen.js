@@ -61,6 +61,9 @@ class CameraScreen extends React.Component {
     if (newProps && newProps.account.length === 0) {
       this.setState({isModalLogin: true})
     }
+    if (newProps && newProps.account.length !== 0) {
+      this.setState({isModalLogin: false})
+    }
     if (newProps && newProps.videoData) {
       // Reactotron.log(newProps.videoData)
       if (newProps.videoData.error && newProps.videoData.error.message === 'Invalid Credentials') {
