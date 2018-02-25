@@ -38,8 +38,9 @@ class GoogleSignIn extends Component {
   onLogOut () {
     this.props.setLogout()
     this.setState({ isModalLogin: true })
+    // this.props.onLogout()
+    // this.refs.Camerascreen.onOpenModalLogin()
   }
-  // https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing
   onClipboard () {
     Clipboard.setString('https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing')
     let toast = Toast.show('Link copied', {
@@ -73,30 +74,34 @@ class GoogleSignIn extends Component {
     const { account } = this.props
     return account && (
       <View style={styles.container}>
-        {/* <StatusBar animated hidden /> */}
+        <StatusBar animated hidden />
         <View style={styles.warpInfo}>
           <View style={styles.warpHeader}>
             <Image source={{ uri: account.photo }} style={styles.avatar} />
             <View style={styles.rowStyle}>
-              <Text style={styles.txtHeader}>{account.name.charAt(0).toUpperCase() + account.name.slice(1)}</Text>
+              <Text style={styles.txtHeader}>{account && account.name ? account.name.charAt(0).toUpperCase() + account.name.slice(1) : null}</Text>
             </View>
-            <Text style={styles.txtHeader}>{account.email}</Text>
+            <Text style={styles.txtHeader}>{account && account.email ? account.email : null}</Text>
           </View>
-          <View style={styles.warpContent}>
-            <View style={styles.rowContent}>
-              <Text style={styles.txtLabel}>Folder name</Text>
-              <Text style={styles.txtValue}>Viettel</Text>
-            </View>
-            <View style={styles.rowContent}>
-              <Text style={styles.txtLabel}>Path</Text>
-              <View style={styles.warpRowPath}>
-                <Text style={{ flex: 1 }}>https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing</Text>
-                <TouchableOpacity onPress={() => this.onClipboard()}>
-                  <Image source={require('../assets/clipboard.png')} style={styles.iconClipboard} />
-                </TouchableOpacity>
+          {
+            account ? (
+              <View style={styles.warpContent}>
+                <View style={styles.rowContent}>
+                  <Text style={styles.txtLabel}>Folder name</Text>
+                  <Text style={styles.txtValue}>Viettel</Text>
+                </View>
+                <View style={styles.rowContent}>
+                  <Text style={styles.txtLabel}>Path</Text>
+                  <View style={styles.warpRowPath}>
+                    <Text style={{ flex: 1 }}>https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing</Text>
+                    <TouchableOpacity onPress={() => this.onClipboard()}>
+                      <Image source={require('../assets/clipboard.png')} style={styles.iconClipboard} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
+            ) : null
+          }
           <TouchableOpacity style={styles.btnLogout} onPress={() => this.onLogOut()}>
             <Text style={styles.txtLogout}>Logout</Text>
           </TouchableOpacity>
