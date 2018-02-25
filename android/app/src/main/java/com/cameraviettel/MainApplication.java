@@ -3,6 +3,7 @@ package com.cameraviettel;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactlibrary.RNThumbnailPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNThumbnailPackage(),
             new RNFetchBlobPackage(),
             new RCTCameraPackage(),
             new RNGoogleSigninPackage()

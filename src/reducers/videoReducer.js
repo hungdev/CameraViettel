@@ -4,12 +4,12 @@ import Reactotron from 'reactotron-react-native'
 const videoReducers = (videos = [], action) => {
   switch (action.type) {
     case UP_SUCCEEDED:
-      Reactotron.log('zzzzz')
-      Reactotron.log(action)
+      // Reactotron.log('zzzzz')
+      // Reactotron.log(action)
       return action.video
     case UP_FAILED:
-      Reactotron.log('response')
-      Reactotron.log(action)
+      // Reactotron.log('response')
+      // Reactotron.log(action)
       return action.video
     default:
       return videos // state does not change

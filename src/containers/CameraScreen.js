@@ -13,6 +13,7 @@ import Reactotron from 'reactotron-react-native'
 import Modal from 'react-native-modalbox'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
 import Spinner from 'react-native-loading-spinner-overlay'
+import RNThumbnail from 'react-native-thumbnail'
 
 class CameraScreen extends React.Component {
   constructor(props) {
@@ -79,13 +80,21 @@ class CameraScreen extends React.Component {
     if (this.camera) {
       this.camera
         .capture({ mode: Camera.constants.CaptureMode.video })
-        .then(data => this.setState({ path: data.path }))
+        .then(data => this.setState({ path: data.path }, this.getThumbnailVideo(data.path)))
         .catch(err => console.error(err));
       this.setState({
         isRecording: true,
       });
     }
   };
+
+  getThumbnailVideo (filepath) {
+    RNThumbnail.get(filepath).then((result) => {
+      return this.setState({thumbnailVideo: result.path})
+      // Reactotron.log('result.path'); // thumbnail path
+      // Reactotron.log(result.path); // thumbnail path
+    })
+  }
 
   stopRecording = () => {
     if (this.camera) {
@@ -194,7 +203,7 @@ class CameraScreen extends React.Component {
   }
 
   render() {
-    const { imageData, isRecording, isModalVisible } = this.state
+    const { imageData, isRecording, isModalVisible, thumbnailVideo } = this.state
     // const token = "ya29.GlxfBSrVOGazs4pcSGGygImUZx1mft1xWjbF76feKHdcbe94NORCpn_-_-_2sM_ooVzfugCwib5jyh-zSiXkQWw5eSmmdOFHCs4vvlg5ny_JpSJRyDNnup5-SHo9aw"
     return (
       <View style={styles.container}>
@@ -228,7 +237,7 @@ class CameraScreen extends React.Component {
         <View style={[styles.overlay, styles.bottomOverlay]}>
           <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.onPressPreview()}>
             <Image
-              source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')}
+              source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo} : require('../assets/icVideoColor.png')}
               style={styles.previewAfterStyle} />
           </TouchableOpacity>
           {(!this.state.isRecording && (
@@ -254,7 +263,7 @@ class CameraScreen extends React.Component {
           isOpen={this.state.isModalVisible}>
           <View style={{ flex: 1 }}>
             <Image
-              source={imageData && imageData.mediaUri ? { uri: imageData.mediaUri } : require('../assets/icVideoColor.png')}
+              source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo} : require('../assets/icVideoColor.png')}
               style={styles.previewBigStyle}
               resizeMode='contain'
             />
