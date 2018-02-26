@@ -12,3 +12,5 @@ export const UP_FAILED = 'UP_FAILED'
 
 export const FETCH_SUCCEEDED = 'FETCH_SUCCEEDED'
 export const FETCH_FAILED = 'FETCH_FAILED'
+
+export const UPLOAD_PROGRESS = 'UPLOAD_PROGRESS'

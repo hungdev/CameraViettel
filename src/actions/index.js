@@ -32,3 +32,10 @@ export const upVideoSuccessAction = (video) => {
     video
   }
 }
+
+export const uploadProgress = (progress) => {
+  return {
+    type: UPLOAD_PROGRESS,
+    progress
+  }
+}
