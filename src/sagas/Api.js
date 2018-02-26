@@ -1,11 +1,24 @@
+import { SET_TOKEN, UP_VIDEO, UP_SUCCEEDED, UP_FAILED, UP_PROGRESS } from '../actions/actionTypes'
+import { put, takeLatest, call } from 'redux-saga/effects'
 import RNFetchBlob from 'react-native-fetch-blob'
 import Reactotron from 'reactotron-react-native'
+import PromiseQueue from 'promise-queue-observable'
+
 // docs: https://developers.google.com/drive/v3/reference/files/update
 function upVideoFromApi (token, video) {
-  return RNFetchBlob.fetch('POST', 'https://www.googleapis.com/upload/drive/v3/files', {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/octet-stream'
-  }, RNFetchBlob.wrap(video))
+  const pq = new PromiseQueue()
+  RNFetchBlob.fetch(
+    'POST',
+    'https://www.googleapis.com/upload/drive/v3/files', {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/octet-stream'
+    },
+    RNFetchBlob.wrap(video)
+  )
+    .uploadProgress((written, total) => {
+      const progress = written / total
+      pq.publish(progress)
+    })
     .then((res) => {
       const id = res.json().id
       return RNFetchBlob.fetch('PATCH', 'https://www.googleapis.com/drive/v3/files/' + id + '?addParents=1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh&removeParents=root', {
@@ -16,8 +29,10 @@ function upVideoFromApi (token, video) {
       }))
     })
     .then((resp) => {
-      return resp.json()
+      pq.publish(resp.json())
     })
+    .catch(pq.throw)
+  return pq
 }
 
 export const Api = {

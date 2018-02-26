@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StatusBar, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { Image, StatusBar, StyleSheet, TouchableOpacity, View, Text, Modal } from 'react-native';
 import Camera from 'react-native-camera';
 import styles from './styles/styles'
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -10,10 +10,11 @@ import { upLoadVideo, setAccount } from '../actions'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
 // import Modal from "react-native-modal"
-import Modal from 'react-native-modalbox'
+import ModalBox from 'react-native-modalbox'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
 import Spinner from 'react-native-loading-spinner-overlay'
 import RNThumbnail from 'react-native-thumbnail'
+import ProgressCircle from 'react-native-progress-circle'
 
 class CameraScreen extends React.Component {
   constructor(props) {
@@ -31,13 +32,11 @@ class CameraScreen extends React.Component {
       imageData: '',
       isModalVisible: false,
       isModalLogin: false,
-      isLoading: false
+      isLoading: false,
+      isModalProgress: false
     };
   }
 
-  openLog() {
-    alert('ahhh')
-  }
 
   componentWillMount() {
     if (!this.props.account.accessToken) {
@@ -59,22 +58,27 @@ class CameraScreen extends React.Component {
   componentWillReceiveProps(newProps) {
     Reactotron.log(newProps)
     if (newProps && newProps.account.length === 0) {
-      this.setState({isModalLogin: true})
+      this.setState({ isModalLogin: true })
     }
     if (newProps && newProps.account.length !== 0) {
-      this.setState({isModalLogin: false})
+      this.setState({ isModalLogin: false })
+    }
+    if (newProps.progress) {
+      this.setState({ progress: newProps.progress, isModalProgress: true })
     }
     if (newProps && newProps.videoData) {
-      // Reactotron.log(newProps.videoData)
+      Reactotron.log('w')
       if (newProps.videoData.error && newProps.videoData.error.message === 'Invalid Credentials') {
-        // alert('please login')
-        this.setState({ failedLogin: true, isModalLogin: true, isLoading: false })
+        Reactotron.log('e')
+        this.setState({ isModalProgress: false, failedLogin: true, isModalLogin: true, isLoading: false, isModalProgress: false })
       }
       if (newProps.videoData && newProps.videoData.id) {
-        this.setState({ videoData: newProps.videoData, isLoading: false })
+        this.setState({ videoData: newProps.videoData, isLoading: false, isModalProgress: false })
         alert(`Upload success \n with id video: ${newProps.videoData.id} \n name: ${newProps.videoData.name}`)
       }
     }
+
+    
   }
 
   takePicture = () => {
@@ -267,7 +271,7 @@ class CameraScreen extends React.Component {
               </TouchableOpacity>
             )}
         </View>
-        <Modal style={styles.modal}
+        <ModalBox style={styles.modal}
           position={"center"}
           swipeToClose={false}
           isOpen={this.state.isModalVisible}>
@@ -286,9 +290,9 @@ class CameraScreen extends React.Component {
               </TouchableOpacity>
             </View>
           </View>
-        </Modal>
+        </ModalBox>
 
-        <Modal
+        <ModalBox
           style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}
           swipeToClose={false}
           position={"center"}
@@ -300,7 +304,30 @@ class CameraScreen extends React.Component {
               </TouchableOpacity>
             </View>
           </View>
-        </Modal>
+        </ModalBox>
+
+        <ModalBox
+          style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}
+          swipeToClose={false}
+          position={"center"}
+          // startOpen={true}
+          isOpen={this.state.isModalProgress}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            {this.state.progress && <ProgressCircle
+              percent={this.state.progress * 100}
+              radius={50}
+              borderWidth={8}
+              color="#3399FF"
+              shadowColor="#999"
+              // bgColor="#fff"
+            // containerStyle={{position: 'absolute', top: 200, left: 200}}
+            >
+              {/* <Text style={{ fontSize: 18 }}>30%</Text> */}
+            </ProgressCircle>}
+          </View>
+        </ModalBox>
+
+
 
       </View>
     );
@@ -310,7 +337,8 @@ class CameraScreen extends React.Component {
 const mapStateToProps = (state) => {
   return {
     account: state.accountReducer,
-    videoData: state.videoReducer
+    videoData: state.videoReducer,
+    progress: state.progressReducer
   }
 }
 

@@ -15,11 +15,15 @@ import AppNavigation from '../navigation/AppNavigation'
 import { REHYDRATE, PURGE, persistCombineReducers, persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // or whatever storage you are using
 import { PersistGate } from 'redux-persist/es/integration/react';
+import progressReducer from '../reducers/progressReducer';
 
 const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: [                    // list of top reducer which need to persist store
+    progressReducer
+],
 }
 
 // let reducer = persistCombineReducers(config, allReducers)

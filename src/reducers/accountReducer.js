@@ -2,7 +2,7 @@ import { SET_TOKEN, SET_ACCOUNT, SET_LOGOUT } from '../actions/actionTypes'
 import Reactotron from 'reactotron-react-native'
 
 const isSetAccount = (state = [], action) => {
-  if (action.type === 'SET_TOKEN') {
+  if (action.type === SET_TOKEN) {
     // console.log(action)
     return action.accessToken
   }

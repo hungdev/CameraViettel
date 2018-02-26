@@ -1,4 +1,4 @@
-import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT } from './actionTypes'
+import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT, UP_PROGRESS } from './actionTypes'
 import Reactotron from 'reactotron-react-native'
 
 export const setToken = () => {
@@ -30,5 +30,12 @@ export const upVideoSuccessAction = (video) => {
   return {
     type: UP_SUCCEEDED,
     video
+  }
+}
+
+export const getProgress = (progress) => {
+  return {
+    type: UP_PROGRESS,
+    progress
   }
 }
