@@ -6,17 +6,11 @@ const videoReducers = (videos = [], action) => {
     case SET_LOGOUT:
       return []
     case UP_SUCCEEDED:
-      // Reactotron.log('zzzzz')
-      // Reactotron.log(action)
-      return action.video
+      Reactotron.log('qqqqqqqqqq')
+      Reactotron.log(action)
+      return [action.video, action.isSuccess]
     case UP_FAILED:
-      // Reactotron.log('response')
-      // Reactotron.log(action)
       return action.video
-    // case UP_PROGRESS:
-    //   Reactotron.log('response')
-    //   Reactotron.log(action.progress)
-    //   return action.progress
     default:
       return videos // state does not change
   }

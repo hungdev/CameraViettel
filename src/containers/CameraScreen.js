@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StatusBar, StyleSheet, TouchableOpacity, View, Text, Modal } from 'react-native';
+import { Image, StatusBar, StyleSheet, TouchableOpacity, View, Text, Modal, TextInput } from 'react-native';
 import Camera from 'react-native-camera';
 import styles from './styles/styles'
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -14,7 +14,9 @@ import ModalBox from 'react-native-modalbox'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
 import Spinner from 'react-native-loading-spinner-overlay'
 import RNThumbnail from 'react-native-thumbnail'
-import ProgressCircle from 'react-native-progress-circle'
+// import ProgressCircle from 'react-native-progress-circle'
+import * as Progress from 'react-native-progress'
+
 
 class CameraScreen extends React.Component {
   constructor(props) {
@@ -33,7 +35,9 @@ class CameraScreen extends React.Component {
       isModalVisible: false,
       isModalLogin: false,
       isLoading: false,
-      isModalProgress: false
+      isModalProgress: false,
+      isModalInputName: false,
+      videoName: ''
     };
   }
 
@@ -56,6 +60,7 @@ class CameraScreen extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
+    Reactotron.log('newProps')
     Reactotron.log(newProps)
     if (newProps && newProps.account.length === 0) {
       this.setState({ isModalLogin: true })
@@ -64,21 +69,24 @@ class CameraScreen extends React.Component {
       this.setState({ isModalLogin: false })
     }
     if (newProps.progress) {
+      Reactotron.log('progress')
+      Reactotron.log(newProps.progress)
       this.setState({ progress: newProps.progress, isModalProgress: true })
     }
     if (newProps && newProps.videoData) {
-      Reactotron.log('w')
       if (newProps.videoData.error && newProps.videoData.error.message === 'Invalid Credentials') {
-        Reactotron.log('e')
+        Reactotron.log('w')
         this.setState({ isModalProgress: false, failedLogin: true, isModalLogin: true, isLoading: false, isModalProgress: false })
       }
-      if (newProps.videoData && newProps.videoData.id) {
-        this.setState({ videoData: newProps.videoData, isLoading: false, isModalProgress: false })
-        alert(`Upload success \n with id video: ${newProps.videoData.id} \n name: ${newProps.videoData.name}`)
+      if (newProps.videoData && newProps.videoData.length !== 0) {
+        Reactotron.log('newProps.videoData')
+        Reactotron.log(newProps.videoData)
+        this.setState({ videoData: newProps.videoData[0], isLoading: false, isModalProgress: false })
+        alert(`Upload success \n with id video: ${newProps.videoData[0].id} \n name: ${newProps.videoData[0].name}`)
       }
     }
 
-    
+
   }
 
   takePicture = () => {
@@ -204,9 +212,14 @@ class CameraScreen extends React.Component {
   }
 
 
-  onSharePress(token) {
-    this.setState({ isModalVisible: false, isLoading: true })
-    this.props.onUpVideo(token, this.state.path)
+  onUploadPress(token) {
+    const {videoName, path} = this.state
+    if (videoName === '') {
+      alert('please input your name video!')
+      return
+    }
+    this.setState({ isModalInputName: false })
+    this.props.onUpVideo(token, path, videoName)
   }
 
   onPressPreview() {
@@ -218,7 +231,6 @@ class CameraScreen extends React.Component {
 
   render() {
     const { imageData, isRecording, isModalVisible, thumbnailVideo } = this.state
-    // const token = "ya29.GlxfBSrVOGazs4pcSGGygImUZx1mft1xWjbF76feKHdcbe94NORCpn_-_-_2sM_ooVzfugCwib5jyh-zSiXkQWw5eSmmdOFHCs4vvlg5ny_JpSJRyDNnup5-SHo9aw"
     return (
       <View style={styles.container}>
         <Spinner visible={this.state.isLoading} textContent={"Loading..."} textStyle={{ color: '#FFF' }} />
@@ -275,18 +287,18 @@ class CameraScreen extends React.Component {
           position={"center"}
           swipeToClose={false}
           isOpen={this.state.isModalVisible}>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, borderRadius: 5 }}>
             <Image
               source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : require('../assets/icVideoColor.png')}
               style={styles.previewBigStyle}
               resizeMode='contain'
             />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
-              <TouchableOpacity onPress={() => this.onSharePress(this.state.token)}>
-                <Image source={require('../assets/icShare.png')} style={{ height: 50, width: 50 }} />
+              <TouchableOpacity onPress={() => this.setState({isModalInputName: true, isModalVisible: false})}>
+                <Image source={require('../assets/icUploadNew.png')} style={{ height: 50, width: 50 }} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.setState({ isModalVisible: false })}>
-                <Image source={require('../assets/icCancel.png')} style={{ height: 50, width: 50 }} />
+                <Image source={require('../assets/icCancelNew.png')} style={{ height: 50, width: 50 }} />
               </TouchableOpacity>
             </View>
           </View>
@@ -313,22 +325,35 @@ class CameraScreen extends React.Component {
           // startOpen={true}
           isOpen={this.state.isModalProgress}>
           <View style={{ flex: 1, justifyContent: 'center' }}>
-            {this.state.progress && <ProgressCircle
-              percent={this.state.progress * 100}
-              radius={50}
-              borderWidth={8}
-              color="#3399FF"
-              shadowColor="#999"
-              // bgColor="#fff"
-            // containerStyle={{position: 'absolute', top: 200, left: 200}}
-            >
-              {/* <Text style={{ fontSize: 18 }}>30%</Text> */}
-            </ProgressCircle>}
+            <Progress.Circle progress={this.state.progress} showsText={true} size={80} />
           </View>
         </ModalBox>
 
-
-
+        <ModalBox
+          style={styles.modalInputName}
+          swipeToClose={false}
+          position={"center"}
+          // startOpen={true}
+          isOpen={this.state.isModalInputName}>
+          <View style={styles.contentModalInput}>
+            <Text style={styles.txtHeaderModalInput}>Please input your video name to upload</Text>
+            <TextInput
+              style={styles.inputStyle}
+              onChangeText={(text) => this.setState({ videoName: text })}
+              value={this.state.videoName}
+              underlineColorAndroid='transparent'
+              placeholder='Input your video name'
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20, paddingHorizontal: 20 }}>
+              <TouchableOpacity onPress={() => this.onUploadPress(this.state.token)}>
+                <Image source={require('../assets/icUploadNew.png')} style={{ height: 50, width: 50 }} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.setState({ isModalInputName: false })}>
+                <Image source={require('../assets/icCancelNew.png')} style={{ height: 40, width: 40 }} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ModalBox>
       </View>
     );
   }
@@ -344,7 +369,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUpVideo: (token, video) => { dispatch(upLoadVideo(token, video)) },
+    onUpVideo: (token, video, videoName) => { dispatch(upLoadVideo(token, video, videoName)) },
     setAccount: (account) => { dispatch(setAccount(account)) }
   }
 }

@@ -7,7 +7,7 @@ import Reactotron from 'reactotron-react-native'
 function * upVideo (action) {
   try {
     let id
-    const pq = Api.upVideoFromApi(action.token, action.video)
+    const pq = Api.upVideoFromApi(action.token, action.video, action.videoName)
     while (true) {
       id = (yield pq.next())[0]
       if (typeof id === 'number') {
@@ -18,7 +18,7 @@ function * upVideo (action) {
     }
     Reactotron.log('FileID:xx')
     Reactotron.log(id)
-    yield put({ type: UP_SUCCEEDED, video: id })
+    yield put({ type: UP_SUCCEEDED, video: id, isSuccess: true })
   } catch (error) {
     Reactotron.log('error')
     Reactotron.log(error)

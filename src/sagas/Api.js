@@ -5,7 +5,9 @@ import Reactotron from 'reactotron-react-native'
 import PromiseQueue from 'promise-queue-observable'
 
 // docs: https://developers.google.com/drive/v3/reference/files/update
-function upVideoFromApi (token, video) {
+function upVideoFromApi (token, video, videoName) {
+  Reactotron.log(video)
+  // file:///storage/emulated/0/DCIM/VID_20180227_153258.mp4
   const pq = new PromiseQueue()
   RNFetchBlob.fetch(
     'POST',
@@ -25,7 +27,7 @@ function upVideoFromApi (token, video) {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       }, JSON.stringify({
-        name: 'MyVideo.mp4'
+        name: `${videoName}.mp4`
       }))
     })
     .then((resp) => {

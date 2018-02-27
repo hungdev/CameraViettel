@@ -99,5 +99,32 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFF'
+  },
+  // modal input name
+  modalInputName: {
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    height: 200,
+    width: 300,
+    borderRadius: 5,
+    padding: 10
+  },
+  contentModalInput: {
+    // justifyContent: 'center',
+    // alignItems: 'center'
+    // height: 200,
+    // width: 200
+  },
+  txtHeaderModalInput: {
+    textAlign: 'center',
+    marginVertical: 20,
+    fontSize: 15
+  },
+  inputStyle: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 3
   }
+
 })

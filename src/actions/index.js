@@ -18,11 +18,12 @@ export const setLogout = () => {
   }
 }
 
-export const upLoadVideo = (token, video) => {
+export const upLoadVideo = (token, video, videoName) => {
   return {
     type: UP_VIDEO,
     token,
-    video
+    video,
+    videoName
   }
 }
 
@@ -33,9 +34,9 @@ export const upVideoSuccessAction = (video) => {
   }
 }
 
-export const getProgress = (progress) => {
-  return {
-    type: UP_PROGRESS,
-    progress
-  }
-}
+// export const getProgress = (progress) => {
+//   return {
+//     type: UP_PROGRESS,
+//     progress
+//   }
+// }
