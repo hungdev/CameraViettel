@@ -94,7 +94,6 @@ class CameraScreen extends React.Component {
       this.camera
         .capture()
         .then(data => this.setState({ imageData: data, path: data.path, isVideoFile: false}))
-        // .then(data => Reactotron.log(data))
         .catch(err => console.error(err));
     }
   };
