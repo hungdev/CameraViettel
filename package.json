@@ -10,7 +10,6 @@
     "apisauce": "^0.14.3",
     "axios": "^0.17.1",
     "base64-js": "^1.2.1",
-    "promise-queue-observable": "^1.0.6",
     "react": "16.2.0",
     "react-native": "0.53.0",
     "react-native-camera": "^0.12.0",
@@ -28,7 +27,8 @@
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-persist": "^5.7.0",
-    "redux-saga": "^0.16.0"
+    "redux-saga": "^0.16.0",
+    "set-queue": "^1.0.6"
   },
   "devDependencies": {
     "babel-jest": "22.2.2",

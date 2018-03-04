@@ -18,12 +18,13 @@ export const setLogout = () => {
   }
 }
 
-export const upLoadVideo = (token, video, videoName) => {
+export const upLoadVideo = (token, video, videoName, fileType) => {
   return {
     type: UP_VIDEO,
     token,
     video,
-    videoName
+    videoName,
+    fileType
   }
 }
 

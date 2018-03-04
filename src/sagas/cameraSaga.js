@@ -7,7 +7,7 @@ import Reactotron from 'reactotron-react-native'
 function * upVideo (action) {
   try {
     let id
-    const pq = Api.upVideoFromApi(action.token, action.video, action.videoName)
+    const pq = Api.upVideoFromApi(action.token, action.video, action.videoName, action.fileType)
     while (true) {
       id = (yield pq.next())[0]
       if (typeof id === 'number') {

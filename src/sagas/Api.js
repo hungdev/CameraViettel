@@ -2,10 +2,10 @@ import { SET_TOKEN, UP_VIDEO, UP_SUCCEEDED, UP_FAILED, UP_PROGRESS } from '../ac
 import { put, takeLatest, call } from 'redux-saga/effects'
 import RNFetchBlob from 'react-native-fetch-blob'
 import Reactotron from 'reactotron-react-native'
-import PromiseQueue from 'promise-queue-observable'
+import PromiseQueue from '../components/Queue'
 
 // docs: https://developers.google.com/drive/v3/reference/files/update
-function upVideoFromApi (token, video, videoName) {
+function upVideoFromApi (token, video, videoName, fileType) {
   Reactotron.log(video)
   // file:///storage/emulated/0/DCIM/VID_20180227_153258.mp4
   const pq = new PromiseQueue()
@@ -27,7 +27,7 @@ function upVideoFromApi (token, video, videoName) {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       }, JSON.stringify({
-        name: `${videoName}.mp4`
+        name: `${videoName}.${fileType}`
       }))
     })
     .then((resp) => {

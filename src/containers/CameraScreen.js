@@ -93,7 +93,8 @@ class CameraScreen extends React.Component {
     if (this.camera) {
       this.camera
         .capture()
-        .then(data => this.setState({ imageData: data }))
+        .then(data => this.setState({ imageData: data, path: data.path, isVideoFile: false}))
+        // .then(data => Reactotron.log(data))
         .catch(err => console.error(err));
     }
   };
@@ -102,7 +103,7 @@ class CameraScreen extends React.Component {
     if (this.camera) {
       this.camera
         .capture({ mode: Camera.constants.CaptureMode.video })
-        .then(data => this.setState({ path: data.path }, this.getThumbnailVideo(data.path)))
+        .then(data => this.setState({ path: data.path, isVideoFile: true }, this.getThumbnailVideo(data.path)))
         .catch(err => console.error(err));
       this.setState({
         isRecording: true,
@@ -213,13 +214,14 @@ class CameraScreen extends React.Component {
 
 
   onUploadPress(token) {
-    const {videoName, path} = this.state
+    const {videoName, path, isVideoFile} = this.state
     if (videoName === '') {
       alert('please input your name video!')
       return
     }
+    const fileType =  isVideoFile ? 'mp4' : 'jpeg'
     this.setState({ isModalInputName: false })
-    this.props.onUpVideo(token, path, videoName)
+    this.props.onUpVideo(token, path, videoName, fileType)
   }
 
   onPressPreview() {
@@ -231,6 +233,8 @@ class CameraScreen extends React.Component {
 
   render() {
     const { imageData, isRecording, isModalVisible, thumbnailVideo } = this.state
+    // Reactotron.log(imageData&&imageData)
+    const thumbnail = imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : require('../assets/icVideoColor.png')
     return (
       <View style={styles.container}>
         <Spinner visible={this.state.isLoading} textContent={"Loading..."} textStyle={{ color: '#FFF' }} />
@@ -262,9 +266,7 @@ class CameraScreen extends React.Component {
         </View>
         <View style={[styles.overlay, styles.bottomOverlay]}>
           <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.onPressPreview()}>
-            <Image
-              source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : require('../assets/icVideoColor.png')}
-              style={styles.previewAfterStyle} />
+            <Image source={thumbnail} style={styles.previewAfterStyle} />
           </TouchableOpacity>
           {(!this.state.isRecording && (
             <TouchableOpacity style={styles.captureButton} onPress={this.takePicture}>
@@ -369,7 +371,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUpVideo: (token, video, videoName) => { dispatch(upLoadVideo(token, video, videoName)) },
+    onUpVideo: (token, video, videoName, fileType) => { dispatch(upLoadVideo(token, video, videoName, fileType)) },
     setAccount: (account) => { dispatch(setAccount(account)) }
   }
 }
