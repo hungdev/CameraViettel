@@ -93,7 +93,7 @@ class CameraScreen extends React.Component {
     if (this.camera) {
       this.camera
         .capture()
-        .then(data => this.setState({ thumbnail: data.mediaUri ,imageData: data, path: data.path, isVideoFile: false }))
+        .then(data => this.setState({ thumbnailFile: data.mediaUri ,imageData: data, path: data.path, isVideoFile: false }))
         .catch(err => console.error(err));
     }
   };
@@ -112,7 +112,7 @@ class CameraScreen extends React.Component {
 
   getThumbnailVideo(filepath) {
     RNThumbnail.get(filepath).then((result) => {
-      return this.setState({ thumbnailVideo: result.path })
+      return this.setState({ thumbnailFile: result.path })
       // Reactotron.log('result.path'); // thumbnail path
       // Reactotron.log(result.path); // thumbnail path
     })
@@ -231,10 +231,8 @@ class CameraScreen extends React.Component {
   }
 
   render() {
-    const { imageData, isRecording, isModalVisible, thumbnailVideo } = this.state
-    // Reactotron.log(imageData&&imageData)
-    const thumbnail = imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : require('../assets/icVideoColor.png')
-    // const thumbnail = imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : { uri: 'http://i.stack.imgur.com/WCveg.jpg' }
+    const { imageData, isRecording, isModalVisible, thumbnailVideo, thumbnailFile} = this.state
+    const thumbnail = thumbnailFile ? {uri: thumbnailFile} : require('../assets/icVideoColor.png')
     return (
       <View style={styles.container}>
         <Spinner visible={this.state.isLoading} textContent={"Loading..."} textStyle={{ color: '#FFF' }} />
