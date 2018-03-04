@@ -82,7 +82,7 @@ class CameraScreen extends React.Component {
         Reactotron.log('newProps.videoData')
         Reactotron.log(newProps.videoData)
         this.setState({ videoData: newProps.videoData[0], isLoading: false, isModalProgress: false })
-        alert(`Upload success \n with id video: ${newProps.videoData[0].id} \n name: ${newProps.videoData[0].name}`)
+        alert(`Upload success \n with id file: ${newProps.videoData[0].id} \n name: ${newProps.videoData[0].name}`)
       }
     }
 
