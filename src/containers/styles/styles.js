@@ -61,12 +61,13 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // alignSelf: 'center',
-    height: 470,
-    width: 300
+    height: '80%',
+    width: '80%',
+    borderRadius: 10
   },
   previewBigStyle: {
-    height: 400,
-    width: 300
+    height: '80%',
+    width: '100%'
   },
   // button
   buttonStyle: {
@@ -125,6 +126,16 @@ export default StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 3
+  },
+  //
+  warpHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderBottomColor: '#E9E5E9',
+    borderBottomWidth: 1
   }
 
 })

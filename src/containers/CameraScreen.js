@@ -93,7 +93,7 @@ class CameraScreen extends React.Component {
     if (this.camera) {
       this.camera
         .capture()
-        .then(data => this.setState({ imageData: data, path: data.path, isVideoFile: false}))
+        .then(data => this.setState({ thumbnail: data.mediaUri ,imageData: data, path: data.path, isVideoFile: false }))
         .catch(err => console.error(err));
     }
   };
@@ -213,12 +213,12 @@ class CameraScreen extends React.Component {
 
 
   onUploadPress(token) {
-    const {videoName, path, isVideoFile} = this.state
+    const { videoName, path, isVideoFile } = this.state
     if (videoName === '') {
-      alert('please input your name video!')
+      alert('please input your file name!')
       return
     }
-    const fileType =  isVideoFile ? 'mp4' : 'jpeg'
+    const fileType = isVideoFile ? 'mp4' : 'jpeg'
     this.setState({ isModalInputName: false })
     this.props.onUpVideo(token, path, videoName, fileType)
   }
@@ -227,13 +227,14 @@ class CameraScreen extends React.Component {
     const { path, isModalVisible } = this.state
     if (path) {
       this.setState({ isModalVisible: !isModalVisible })
-    } else alert('Please Record Video!')
+    } else alert('Please take a picture or record video!')
   }
 
   render() {
     const { imageData, isRecording, isModalVisible, thumbnailVideo } = this.state
     // Reactotron.log(imageData&&imageData)
     const thumbnail = imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : require('../assets/icVideoColor.png')
+    // const thumbnail = imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : { uri: 'http://i.stack.imgur.com/WCveg.jpg' }
     return (
       <View style={styles.container}>
         <Spinner visible={this.state.isLoading} textContent={"Loading..."} textStyle={{ color: '#FFF' }} />
@@ -287,21 +288,31 @@ class CameraScreen extends React.Component {
         <ModalBox style={styles.modal}
           position={"center"}
           swipeToClose={false}
+          // isOpen={true}>
           isOpen={this.state.isModalVisible}>
-          <View style={{ flex: 1, borderRadius: 5 }}>
+          <View style={{ height: '100%', width: '100%' }}>
+            <View style={styles.warpHeader}>
+              <TouchableOpacity onPress={() => this.setState({ isModalVisible: false })}>
+                <Text style={{color: 'black'}}>Done</Text>
+              </TouchableOpacity>
+              {/* <Text>Upload</Text> */}
+              <TouchableOpacity onPress={() => this.setState({isModalInputName: true, isModalVisible: false})}>
+                <Image source={require('../assets/icUploadIos.png')} style={{ height: 25, width: 25 }} />
+              </TouchableOpacity>
+            </View>
             <Image
-              source={imageData && imageData.mediaUri || thumbnailVideo ? { uri: imageData.mediaUri || thumbnailVideo } : require('../assets/icVideoColor.png')}
+              source={thumbnail}
               style={styles.previewBigStyle}
               resizeMode='contain'
             />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
+            {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
               <TouchableOpacity onPress={() => this.setState({isModalInputName: true, isModalVisible: false})}>
                 <Image source={require('../assets/icUploadNew.png')} style={{ height: 50, width: 50 }} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.setState({ isModalVisible: false })}>
                 <Image source={require('../assets/icCancelNew.png')} style={{ height: 50, width: 50 }} />
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
         </ModalBox>
 
@@ -337,13 +348,13 @@ class CameraScreen extends React.Component {
           // startOpen={true}
           isOpen={this.state.isModalInputName}>
           <View style={styles.contentModalInput}>
-            <Text style={styles.txtHeaderModalInput}>Please input your video name to upload</Text>
+            <Text style={styles.txtHeaderModalInput}>Please input your file name to upload</Text>
             <TextInput
               style={styles.inputStyle}
               onChangeText={(text) => this.setState({ videoName: text })}
               value={this.state.videoName}
               underlineColorAndroid='transparent'
-              placeholder='Input your video name'
+              placeholder='Input your file name'
             />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20, paddingHorizontal: 20 }}>
               <TouchableOpacity onPress={() => this.onUploadPress(this.state.token)}>
