@@ -213,16 +213,21 @@ class CameraScreen extends React.Component {
 
   onUploadPress(token) {
     const { videoName, path, isVideoFile } = this.state
-    Reactotron.log('pppp')
-    Reactotron.log(path)
+    // Reactotron.log('pppp')
+    // Reactotron.log(path)
+    const arrPath = path.split(".", 2)
+    const pathString = arrPath[1]
+    // Reactotron.log('pppp')
+    // Reactotron.log(pathString)
     this.props.setNull()
     if (videoName === '') {
       alert('please input your file name!')
       return
     }
-    const fileType = isVideoFile ? 'mp4' : 'jpeg'
+    // const fileType = isVideoFile ? 'mp4' : 'jpeg'
     this.setState({ isModalInputName: false })
-    this.props.onUpVideo(token, path, videoName, fileType)
+    this.props.onUpVideo(token, path, videoName, pathString)
+    // this.props.onUpVideo(token, path, videoName, fileType)
   }
 
   onPressPreview() {
