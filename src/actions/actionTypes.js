@@ -2,6 +2,7 @@
 export const SET_TOKEN = 'SET_TOKEN'
 export const SET_ACCOUNT = 'SET_ACCOUNT'
 export const SET_LOGOUT = 'SET_LOGOUT'
+export const SET_NULL = 'SET_NULL'
 
 export const UP_VIDEO = 'UP_VIDEO'
 // export const FETCH_PIN = 'FETCH_PIN'

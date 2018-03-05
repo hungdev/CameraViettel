@@ -1,4 +1,4 @@
-import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT, UP_PROGRESS } from './actionTypes'
+import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT, UP_PROGRESS, SET_NULL } from './actionTypes'
 import Reactotron from 'reactotron-react-native'
 
 export const setToken = () => {
@@ -15,6 +15,11 @@ export const setAccount = (account) => {
 export const setLogout = () => {
   return {
     type: SET_LOGOUT
+  }
+}
+export const setNull = () => {
+  return {
+    type: SET_NULL
   }
 }
 

@@ -6,7 +6,7 @@ import PromiseQueue from '../components/Queue'
 
 // docs: https://developers.google.com/drive/v3/reference/files/update
 function upVideoFromApi (token, video, videoName, fileType) {
-  Reactotron.log(video)
+  // Reactotron.log(video)
   // file:///storage/emulated/0/DCIM/VID_20180227_153258.mp4
   const pq = new PromiseQueue()
   RNFetchBlob.fetch(

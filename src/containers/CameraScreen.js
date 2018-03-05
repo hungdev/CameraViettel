@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import base64js from 'base64-js'
 import axios from 'axios'
 import { create } from 'apisauce'
-import { upLoadVideo, setAccount } from '../actions'
+import { upLoadVideo, setAccount, setNull } from '../actions'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
 // import Modal from "react-native-modal"
@@ -31,7 +31,6 @@ class CameraScreen extends React.Component {
         flashMode: Camera.constants.FlashMode.auto,
       },
       isRecording: false,
-      imageData: '',
       isModalVisible: false,
       isModalLogin: false,
       isLoading: false,
@@ -93,7 +92,7 @@ class CameraScreen extends React.Component {
     if (this.camera) {
       this.camera
         .capture()
-        .then(data => this.setState({ thumbnailFile: data.mediaUri ,imageData: data, path: data.path, isVideoFile: false }))
+        .then(data => this.setState({ thumbnailFile: data.mediaUri , path: data.path, isVideoFile: false }))
         .catch(err => console.error(err));
     }
   };
@@ -214,6 +213,9 @@ class CameraScreen extends React.Component {
 
   onUploadPress(token) {
     const { videoName, path, isVideoFile } = this.state
+    Reactotron.log('pppp')
+    Reactotron.log(path)
+    this.props.setNull()
     if (videoName === '') {
       alert('please input your file name!')
       return
@@ -231,7 +233,7 @@ class CameraScreen extends React.Component {
   }
 
   render() {
-    const { imageData, isRecording, isModalVisible, thumbnailVideo, thumbnailFile} = this.state
+    const { isRecording, isModalVisible, thumbnailVideo, thumbnailFile} = this.state
     const thumbnail = thumbnailFile ? {uri: thumbnailFile} : require('../assets/icVideoColor.png')
     return (
       <View style={styles.container}>
@@ -380,7 +382,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onUpVideo: (token, video, videoName, fileType) => { dispatch(upLoadVideo(token, video, videoName, fileType)) },
-    setAccount: (account) => { dispatch(setAccount(account)) }
+    setAccount: (account) => { dispatch(setAccount(account)) },
+    setNull: () => {dispatch(setNull())}
   }
 }
 
