@@ -22,6 +22,7 @@
     "react-native-root-toast": "^3.0.1",
     "react-native-scrollable-tab-view": "^0.8.0",
     "react-native-thumbnail": "^1.1.0",
+    "react-native-vector-icons": "^4.5.0",
     "react-navigation": "^1.0.3",
     "react-navigation-slide-from-right-transition": "^1.0.4",
     "react-redux": "^5.0.6",
