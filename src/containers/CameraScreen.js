@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import base64js from 'base64-js'
 import axios from 'axios'
 import { create } from 'apisauce'
-import { upLoadVideo, setAccount, setNull } from '../actions'
+import { upLoadVideo, setAccount, setNull , getFolder} from '../actions'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
 // import Modal from "react-native-modal"
@@ -202,6 +202,7 @@ class CameraScreen extends React.Component {
         // console.log(user)
         // Reactotron.log(user)
         this.props.setAccount(user)
+        this.props.getFolder(user.accessToken)
         this.setState({ isModalLogin: false, token: user.accessToken, isLoading: false })
       })
       // await this.props.navigation.navigate('CameraScreen')
@@ -388,7 +389,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onUpVideo: (token, video, videoName, fileType) => { dispatch(upLoadVideo(token, video, videoName, fileType)) },
     setAccount: (account) => { dispatch(setAccount(account)) },
-    setNull: () => {dispatch(setNull())}
+    setNull: () => {dispatch(setNull())},
+    getFolder: (account) => { dispatch(getFolder(account)) }
   }
 }
 

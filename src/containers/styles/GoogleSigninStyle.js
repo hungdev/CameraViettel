@@ -20,18 +20,34 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4283f4',
-    paddingTop: 70,
-    paddingBottom: 30
+    width: '100%',
+    paddingVertical: 30
   },
   warpContent: {
     width: width,
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: 'grey',
-    paddingTop: 20
+    paddingHorizontal: 20,
+    paddingVertical: 5
+
+    // borderTopWidth: 1,
+    // borderTopColor: 'grey',
+    // paddingTop: 20
   },
   rowContent: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    borderWidth: 1,
+    padding: 10,
+
+    borderRadius: 2,
+    borderColor: '#ddd',
+    borderBottomWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
+    marginLeft: 5,
+    marginRight: 5,
+    marginTop: 10
   },
   txtLabel: {
     flex: 3,
@@ -105,6 +121,45 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFF'
+  },
+  //
+  warpAddButton: {
+    borderTopWidth: 0,
+    padding: 10,
+    marginBottom: 70
+  },
+  // modal
+  // modal input name
+  modalInputName: {
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    height: 200,
+    width: 300,
+    borderRadius: 5,
+    padding: 10
+  },
+  contentModalInput: {
+    // justifyContent: 'center',
+    // alignItems: 'center'
+    // height: 200,
+    // width: 200
+  },
+  txtHeaderModalInput: {
+    textAlign: 'center',
+    marginVertical: 20,
+    fontSize: 15
+  },
+  inputStyle: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 3
+  },
+  icLogout: {
+    height: 50,
+    width: 50
+  },
+  folderNameStyle: {
+    flex: 1
   }
-
 })

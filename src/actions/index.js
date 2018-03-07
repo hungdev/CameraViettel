@@ -1,4 +1,5 @@
-import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT, UP_PROGRESS, SET_NULL } from './actionTypes'
+import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT, UP_PROGRESS, SET_NULL, CREATE_FOLDER,
+  GET_FOLDER } from './actionTypes'
 import Reactotron from 'reactotron-react-native'
 
 export const setToken = () => {
@@ -40,9 +41,17 @@ export const upVideoSuccessAction = (video) => {
   }
 }
 
-// export const getProgress = (progress) => {
-//   return {
-//     type: UP_PROGRESS,
-//     progress
-//   }
-// }
+export const createFolder = (token, folderName) => {
+  return {
+    type: CREATE_FOLDER,
+    token,
+    folderName
+  }
+}
+
+export const getFolder = (token) => {
+  return {
+    type: GET_FOLDER,
+    token
+  }
+}
