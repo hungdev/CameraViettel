@@ -91,17 +91,17 @@ function createFolderFromApi (token, folderName) {
 //   })
 // }
 
-// function getFolderFromApi (token) {
-//   // return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false`, {
-//   return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false and 'littlepjg@gmail.com' in writers`, {
-//     Authorization: `Bearer ${token}`,
-//     'Content-Type': 'application/json'
-//   }).then((res) => {
-//     Reactotron.log('xxxx')
-//     Reactotron.log(res)
-//     return res
-//   })
-// }
+function getFolderFromApi (token) {
+  // return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false`, {
+  return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false and 'littlepjg@gmail.com' in writers`, {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }).then((res) => {
+    Reactotron.log('xxxx')
+    Reactotron.log(res)
+    return res
+  })
+}
 
 export const Api = {
   upVideoFromApi,
