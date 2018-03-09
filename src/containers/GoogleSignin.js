@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, StatusBar, Clipboard, 
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
-import { setToken, setAccount, setLogout, createFolder, getFolder, setNull, getICameraFolder } from '../actions'
+import { setAccount, setLogout, createFolder, getFolder, getICameraFolder, setSelectedFolder } from '../actions'
 import styles from './styles/GoogleSigninStyle'
 import ModalBox from 'react-native-modalbox'
 import Toast from 'react-native-root-toast'
@@ -58,13 +58,13 @@ class GoogleSignIn extends Component {
     if (this.state.isCreateFolder && !newProps.fetching) {
       this.setState({ isCreateFolder: false })
       if (newProps.isSuccess) {
-        this.setState({isGetFolder: true})
+        this.setState({ isGetFolder: true })
         this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
         // Reactotron.log('zzzzzzzzzzzll')
         // Reactotron.log(newProps)
         // Reactotron.log('xxxxxxxxxxxx')
         // Reactotron.log(newProps.dataFolder)
-        // alert('create folder success')
+        alert('create folder success')
       } else {
         alert(`err: ${newProps.error}`)
       }
@@ -78,29 +78,19 @@ class GoogleSignIn extends Component {
     }
 
     if (this.state.isGetFolder && !newProps.fetching) {
-      this.setState({isGetFolder: false})
+      this.setState({ isGetFolder: false })
       // Reactotron.log('ffff')
       // Reactotron.log(newProps)
     }
 
     if (newProps.folders && newProps.folders.length !== 0) {
-      Reactotron.log('newProps folder GG')
-      Reactotron.log(newProps.folders)
+      // Reactotron.log('newProps folder GG')
+      // Reactotron.log(newProps.folders)
       this.setState({ folders: newProps.folders, folderSelected: newProps.folders[0].id })
+      Reactotron.log('iiiiiiddddd')
+      Reactotron.log(newProps.folders[0].id)
+      this.props.setSelectedFolder(newProps.folders[0].id)
     }
-    // if (this.state.isGetFolder && !newProps.fetching) {
-    //   this.setState({isGetFolder: false})
-    //   Reactotron.log('fooo')
-    //   // Reactotron.log(newProps.folders)
-    //   this.setState({folders: newProps.folders})
-    // }
-
-    // if (account && account.accessToken) {
-    //   Reactotron.log('iiiiiic')
-    //   Reactotron.log(newProps.iCamFolder)
-    //   // this.setState({isGetFolder: true})
-    //   this.props.getFolder(account.accessToken, newProps.iCamFolder)
-    // }
   }
 
   onLogOut () {
@@ -110,7 +100,8 @@ class GoogleSignIn extends Component {
     // this.refs.Camerascreen.onOpenModalLogin()
   }
   onClipboard () {
-    Clipboard.setString('https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing')
+    const { folderSelected } = this.state
+    Clipboard.setString(`https://drive.google.com/drive/folders/${folderSelected}?usp=sharing`)
     let toast = Toast.show('Link copied', {
       duration: Toast.durations.LONG,
       position: Toast.positions.CENTER,
@@ -140,32 +131,39 @@ class GoogleSignIn extends Component {
 
   onCreateFolder () {
     const { account, iCamFolder } = this.props
-    Reactotron.log('iiiiicammmm')
-    Reactotron.log(iCamFolder)
+    // Reactotron.log('iiiiicammmm')
+    // Reactotron.log(iCamFolder)
     const { folderName } = this.state
     this.setState({ isModalInputName: false, isCreateFolder: true })
     this.props.createFolder(account.accessToken, folderName, iCamFolder)
+  }
+
+  onSelectFolder (item) {
+    if (item.id === this.state.folderSelected) {
+      this.setState({ folderSelected: this.props.iCamFolder })
+      this.props.setSelectedFolder(this.props.iCamFolder)
+    } else {
+      this.setState({ folderSelected: item.id })
+      this.props.setSelectedFolder(item.id)
+    }
   }
 
   renderFolders (item) {
     const { folderSelected } = this.state
     return (
       <View style={styles.warpContent}>
-        <TouchableOpacity style={styles.rowContent} onPress={() => this.setState({ folderSelected: item.id })}>
+        <TouchableOpacity style={styles.rowContent} onPress={() => this.onSelectFolder(item)}>
           <View style={styles.folderNameStyle}>
             <Text>{item.name}</Text>
           </View>
           <Ionicons name='md-checkmark-circle-outline' size={30} color={folderSelected === item.id ? 'green' : 'grey'} />
-          {/* <Text style={styles.txtLabel}>Path</Text>
-          <View style={styles.warpRowPath}>
-            <Text style={{ flex: 1 }}>https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing</Text>
-            <TouchableOpacity onPress={() => this.onClipboard()}>
-              <Image source={require('../assets/clipboard.png')} style={styles.iconClipboard} />
-            </TouchableOpacity>
-          </View> */}
         </TouchableOpacity>
       </View>
     )
+  }
+
+  onSearch () {
+
   }
 
   render () {
@@ -187,34 +185,41 @@ class GoogleSignIn extends Component {
               </TouchableOpacity>
             </View>
           </View>
+          <View style={styles.warpTextInput}>
+            <TextInput
+              style={styles.textInput}
+              ref='searchText'
+              autoFocus
+              placeholder='Email share with special person'
+              // placeholderTextColor='white'
+              value={this.state.search}
+              onChangeText={(text) => this.setState({ search: text })}
+              autoCapitalize='none'
+              onSubmitEditing={() => this.onSearch()}
+              returnKeyType={'search'}
+              autoCorrect={false}
+              underlineColorAndroid='green'
+            // selectionColor='white'
+            />
+            <TouchableOpacity onPress={() => this.onSearch()}>
+              <Ionicons name='ios-send' size={40} color='grey' />
+            </TouchableOpacity>
+          </View>
           <FlatList
             data={folders}
             extraData={this.state}
             renderItem={({ item }) => this.renderFolders(item)}
             keyExtractor={item => item.id}
           />
-          {/* {
-            account ? (
-              <View style={styles.warpContent}>
-                <View style={styles.rowContent}>
-                  <Text style={styles.txtLabel}>Folder name</Text>
-                  <Text style={styles.txtValue}>Viettel</Text>
-                </View>
-                <View style={styles.rowContent}>
-                  <Text style={styles.txtLabel}>Path</Text>
-                  <View style={styles.warpRowPath}>
-                    <Text style={{ flex: 1 }}>https://drive.google.com/drive/folders/1rv5rmnhoeghcW41c1KNjO7nLR98XzmNh?usp=sharing</Text>
-                    <TouchableOpacity onPress={() => this.onClipboard()}>
-                      <Image source={require('../assets/clipboard.png')} style={styles.iconClipboard} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                </View>
-              ) : null
-            } */}
-          <TouchableOpacity style={styles.warpAddButton} onPress={() => this.setState({ isModalInputName: !this.state.isModalInputName })}>
-            <Foundation name='folder-add' size={50} color='black' />
-          </TouchableOpacity>
+          <View style={styles.rowBottom}>
+            <TouchableOpacity style={[styles.warpAddButton]} onPress={() => this.setState({ isModalInputName: !this.state.isModalInputName })}>
+              <Foundation name='folder-add' size={50} color='black' />
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.warpAddButton]} onPress={() => this.onClipboard()}>
+              <Image source={require('../assets/clipboard.png')} style={styles.iconClipboard} />
+            </TouchableOpacity>
+          </View>
+
         </View>
         <ModalBox
           style={{ justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}
@@ -278,17 +283,12 @@ const mapStateToProps = (state) => {
   return {
     account: state.accountReducer,
     videoData: state.videoReducer,
-    // folders: state.folderReducer,
-    // dataFolder: state.folderReducer,
-    // iCamFetching: state.folderReducer.iCamFetching,
     iCamFolder: state.folderReducer.iCamFolder,
     fetching: state.folderReducer.fetching,
     isSuccess: state.folderReducer.isSuccess,
     error: state.folderReducer.error,
 
     folders: state.folderReducer.folders
-    // isSuccess: state.folderReducer.isSuccess,
-    // error: state.folderReducer.error,
 
   }
 }
@@ -299,8 +299,8 @@ const mapDispatchToProps = (dispatch) => {
     setLogout: () => { dispatch(setLogout()) },
     createFolder: (account, folderName, parent) => { dispatch(createFolder(account, folderName, parent)) },
     getFolder: (account, parent) => { dispatch(getFolder(account, parent)) },
-    // setNull: () => { dispatch(setNull()) },
-    getICameraFolder: (account) => { dispatch(getICameraFolder(account)) }
+    getICameraFolder: (account) => { dispatch(getICameraFolder(account)) },
+    setSelectedFolder: (folder) => { dispatch(setSelectedFolder(folder)) }
   }
 }
 

@@ -251,21 +251,17 @@ class CameraScreen extends React.Component {
 
   onUploadPress() {
     const { videoName, path, isVideoFile } = this.state
-    const {iCamFolder, account} = this.props
-    // Reactotron.log('pppp')
-    // Reactotron.log(path)
+    const {iCamFolder, account, selectedFolder} = this.props
     const arrPath = path.split(".", 2)
     const pathString = arrPath[1]
-    // Reactotron.log('pppp')
-    // Reactotron.log(pathString)
-    // this.props.setNull()
     if (videoName === '') {
       alert('please input your file name!')
       return
     }
     // const fileType = isVideoFile ? 'mp4' : 'jpeg'
     this.setState({ isModalInputName: false, isUploading: true })
-    this.props.onUpVideo(account.accessToken, path, videoName, pathString, iCamFolder)
+    const parent = selectedFolder ? selectedFolder : iCamFolder
+    this.props.onUpVideo(account.accessToken, path, videoName, pathString, parent)
     // this.props.onUpVideo(token, path, videoName, fileType)
   }
 
@@ -428,7 +424,8 @@ const mapStateToProps = (state) => {
     iFetching: state.folderReducer.fetching,
     iIsSuccess: state.folderReducer.isSuccess,
     iError: state.folderReducer.error,
-    folders: state.folderReducer.folders
+    folders: state.folderReducer.folders,
+    selectedFolder: state.folderReducer.selectedFolder
   }
 }
 

@@ -66,8 +66,8 @@ export default StyleSheet.create({
     paddingVertical: 10
   },
   iconClipboard: {
-    height: 30,
-    width: 30
+    height: 40,
+    width: 40
   },
   txtHeader: {
     color: 'white'
@@ -127,6 +127,7 @@ export default StyleSheet.create({
     borderTopWidth: 0,
     padding: 10,
     marginBottom: 70
+    // flex: 1
   },
   // modal
   // modal input name
@@ -161,5 +162,27 @@ export default StyleSheet.create({
   },
   folderNameStyle: {
     flex: 1
+  },
+  rowBottom: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%'
+  },
+  btnClipboard: {
+
+  },
+  textInput: {
+    height: 50,
+    width: width,
+    flex: 1
+  },
+  warpTextInput: {
+    width: width,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })

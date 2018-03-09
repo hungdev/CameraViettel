@@ -7,7 +7,6 @@ import _ from 'lodash'
 // https://stackoverflow.com/questions/43465769/google-drive-api-v3-simple-create-a-folder-in-a-folder-issue
 // docs: https://developers.google.com/drive/v3/reference/files/update
 function upVideoFromApi (token, video, videoName, fileType, parent) {
-  // Reactotron.log(video)
   // file:///storage/emulated/0/DCIM/VID_20180227_153258.mp4
   const pq = new PromiseQueue()
   RNFetchBlob.fetch(
@@ -86,10 +85,11 @@ function getICameraFolder (token) {
 }
 
 function getFolderFromApi (token, parent) {
-  return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='${parent}' in parents and trashed=false`, {
+  return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='${parent}' in parents and trashed=false and mimeType='application/vnd.google-apps.folder' and 'littlepjg@gmail.com' in writers`, {
   // return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false and 'littlepjg@gmail.com' in writers`, {
     Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'mimeType': 'application/vnd.google-apps.folder'
   }).then((res) => {
     Reactotron.log('call Api get folder')
     Reactotron.log(res)
@@ -102,5 +102,4 @@ export const Api = {
   createFolderFromApi,
   getFolderFromApi,
   getICameraFolder
-  // checkICamFolder
 }

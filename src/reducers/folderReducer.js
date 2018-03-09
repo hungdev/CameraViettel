@@ -1,7 +1,7 @@
 import {
-  CREATE_FOLDER_SUCCEEDED, CREATE_FOLDER_FAILED, SET_NULL, SET_LOGOUT, GET_FOLDER_SUCCEEDED,
+  CREATE_FOLDER_SUCCEEDED, CREATE_FOLDER_FAILED, SET_LOGOUT, GET_FOLDER_SUCCEEDED,
   GET_FOLDER_FAILED, GET_ICAMERA_FOLDER_SUCCEEDED, GET_ICAMERA_FOLDER_FAILED, CREATE_FOLDER,
-  GET_ICAMERA_FOLDER, GET_FOLDER
+  GET_ICAMERA_FOLDER, GET_FOLDER, SET_SELECTED_FOLDER
 } from '../actions/actionTypes'
 import Reactotron from 'reactotron-react-native'
 
@@ -12,6 +12,7 @@ const initialState = {
   isSuccess: null,
   dataFetched: false,
   fetching: false,
+  selectedFolder: null,
   // iCamFetching: false,
   error: null
 }
@@ -41,8 +42,8 @@ const folderReducers = (state = initialState, action) => {
     case GET_ICAMERA_FOLDER_FAILED:
       return { ...state, fetching: false, error: action.error }
 
-    // case SET_NULL:
-    //   return []
+    case SET_SELECTED_FOLDER:
+      return {...state, selectedFolder: action.selectedFolder}
     default:
       return state // state does not change
   }
