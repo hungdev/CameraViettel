@@ -82,11 +82,26 @@ class CameraScreen extends React.Component {
       if (newProps.isSuccess) {
         // Reactotron.log('RCP')
         // Reactotron.log(newProps.videoData)
-        this.setState({ videoData: newProps.videoData[0], isLoading: false, isModalProgress: false })
+        this.setState({ videoData: newProps.videoData[0], isLoading: false, isModalProgress: false, isGetFolder: true })
         alert(`Upload success \n with id file: ${newProps.videoData.data.id} \n name: ${newProps.videoData.data.name}`)
+        this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
       } else {
         alert (`err: ${newProps.error}`)
       }
+    }
+
+    if (this.state.isGetICamera && !newProps.iFetching) {
+      this.setState({isGetICamera: false, isGetFolder: true})
+      // Reactotron.log('aaaaac')
+      // Reactotron.log(newProps.iCamFolder)
+
+      this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
+    }
+
+    if (this.state.isGetFolder && !newProps.iFetching) {
+      this.setState({isGetFolder: false})
+      // Reactotron.log('ffff')
+      // Reactotron.log(newProps)
     }
 
     // if ()
@@ -223,9 +238,9 @@ class CameraScreen extends React.Component {
         Reactotron.log(user)
         this.props.setAccount(user)
         // this.props.getFolder(user.accessToken)
+        this.setState({ isModalLogin: false, isLoading: false, isGetICamera: true })
         this.props.getICameraFolder(user.accessToken)
         
-        this.setState({ isModalLogin: false, token: user.accessToken, isLoading: false })
       })
       // await this.props.navigation.navigate('CameraScreen')
     } catch (error) {
@@ -234,9 +249,9 @@ class CameraScreen extends React.Component {
   }
 
 
-  onUploadPress(token) {
+  onUploadPress() {
     const { videoName, path, isVideoFile } = this.state
-    const {iCamFolder} = this.props
+    const {iCamFolder, account} = this.props
     // Reactotron.log('pppp')
     // Reactotron.log(path)
     const arrPath = path.split(".", 2)
@@ -250,7 +265,7 @@ class CameraScreen extends React.Component {
     }
     // const fileType = isVideoFile ? 'mp4' : 'jpeg'
     this.setState({ isModalInputName: false, isUploading: true })
-    this.props.onUpVideo(token, path, videoName, pathString, iCamFolder)
+    this.props.onUpVideo(account.accessToken, path, videoName, pathString, iCamFolder)
     // this.props.onUpVideo(token, path, videoName, fileType)
   }
 
@@ -405,11 +420,15 @@ const mapStateToProps = (state) => {
     account: state.accountReducer,
     videoData: state.videoReducer,
     progress: state.progressReducer,
-    folder: state.folderReducer,
+    // folder: state.folderReducer,
     fetching: state.videoReducer.fetching,
     isSuccess: state.videoReducer.isSuccess,
     error: state.videoReducer.error,
-    iCamFolder: state.folderReducer.iCamFolder
+    iCamFolder: state.folderReducer.iCamFolder,
+    iFetching: state.folderReducer.fetching,
+    iIsSuccess: state.folderReducer.isSuccess,
+    iError: state.folderReducer.error,
+    folders: state.folderReducer.folders
   }
 }
 
@@ -418,7 +437,7 @@ const mapDispatchToProps = (dispatch) => {
     onUpVideo: (token, video, videoName, fileType, parent) => { dispatch(upLoadVideo(token, video, videoName, fileType, parent)) },
     setAccount: (account) => { dispatch(setAccount(account)) },
     // setNull: () => {dispatch(setNull())},
-    getFolder: (account) => { dispatch(getFolder(account)) },
+    getFolder: (account, parent) => { dispatch(getFolder(account, parent)) },
     getICameraFolder: (account) => { dispatch(getICameraFolder(account)) }
   }
 }

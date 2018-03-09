@@ -12,7 +12,7 @@ const initialState = {
   isSuccess: null,
   dataFetched: false,
   fetching: false,
-  iCamFetching: false,
+  // iCamFetching: false,
   error: null
 }
 

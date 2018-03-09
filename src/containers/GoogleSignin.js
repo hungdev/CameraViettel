@@ -40,9 +40,9 @@ class GoogleSignIn extends Component {
       shouldFetchBasicProfile: true
     })
     if (account && account.accessToken) {
-      Reactotron.log('iiiiiic')
-      Reactotron.log(this.props.iCamFolder)
-      this.setState({isGetFolder: true})
+      // Reactotron.log('iiiiiic')
+      // Reactotron.log(this.props.iCamFolder)
+      this.setState({ isGetFolder: true })
       this.props.getFolder(account.accessToken, this.props.iCamFolder)
     }
   }
@@ -56,23 +56,36 @@ class GoogleSignIn extends Component {
     }
 
     if (this.state.isCreateFolder && !newProps.fetching) {
-      this.setState({isCreateFolder: false})
+      this.setState({ isCreateFolder: false })
       if (newProps.isSuccess) {
+        this.setState({isGetFolder: true})
+        this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
         // Reactotron.log('zzzzzzzzzzzll')
         // Reactotron.log(newProps)
         // Reactotron.log('xxxxxxxxxxxx')
-        Reactotron.log(newProps.dataFolder)
+        // Reactotron.log(newProps.dataFolder)
         // alert('create folder success')
       } else {
         alert(`err: ${newProps.error}`)
       }
     }
 
-    if (this.state.isGetFolder) {
-      Reactotron.log('isGetFolder')
+    if (this.state.isGetICamera && !newProps.fetching) {
+      this.setState({ isGetICamera: false, isGetFolder: true })
+      // Reactotron.log('zzzzzzzzzzmmmm')
+      // Reactotron.log(newProps.iCamFolder)
+      this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
     }
 
-    if (newProps && newProps.folders.length !== 0) {
+    if (this.state.isGetFolder && !newProps.fetching) {
+      this.setState({isGetFolder: false})
+      // Reactotron.log('ffff')
+      // Reactotron.log(newProps)
+    }
+
+    if (newProps.folders && newProps.folders.length !== 0) {
+      Reactotron.log('newProps folder GG')
+      Reactotron.log(newProps.folders)
       this.setState({ folders: newProps.folders, folderSelected: newProps.folders[0].id })
     }
     // if (this.state.isGetFolder && !newProps.fetching) {
@@ -88,8 +101,6 @@ class GoogleSignIn extends Component {
     //   // this.setState({isGetFolder: true})
     //   this.props.getFolder(account.accessToken, newProps.iCamFolder)
     // }
-
-    // if(newProps && newProps)
   }
 
   onLogOut () {
@@ -137,10 +148,10 @@ class GoogleSignIn extends Component {
   }
 
   renderFolders (item) {
-    const {folderSelected} = this.state
+    const { folderSelected } = this.state
     return (
       <View style={styles.warpContent}>
-        <TouchableOpacity style={styles.rowContent} onPress={() => this.setState({folderSelected: item.id})}>
+        <TouchableOpacity style={styles.rowContent} onPress={() => this.setState({ folderSelected: item.id })}>
           <View style={styles.folderNameStyle}>
             <Text>{item.name}</Text>
           </View>
@@ -253,8 +264,8 @@ class GoogleSignIn extends Component {
     try {
       await GoogleSignin.signIn().then((user) => {
         this.props.setAccount(user)
-        this.setState({ isModalLogin: false, token: user.accessToken })
-        this.props.getFolder(user.accessToken)
+        this.setState({ isModalLogin: false, token: user.accessToken, isGetICamera: true })
+        this.props.getICameraFolder(user.accessToken)
       })
       // await this.props.navigation.navigate('CameraScreen')
     } catch (error) {
@@ -268,12 +279,13 @@ const mapStateToProps = (state) => {
     account: state.accountReducer,
     videoData: state.videoReducer,
     // folders: state.folderReducer,
-    dataFolder: state.folderReducer,
+    // dataFolder: state.folderReducer,
+    // iCamFetching: state.folderReducer.iCamFetching,
+    iCamFolder: state.folderReducer.iCamFolder,
     fetching: state.folderReducer.fetching,
     isSuccess: state.folderReducer.isSuccess,
     error: state.folderReducer.error,
-    iCamFetching: state.folderReducer.iCamFetching,
-    iCamFolder: state.folderReducer.iCamFolder,
+
     folders: state.folderReducer.folders
     // isSuccess: state.folderReducer.isSuccess,
     // error: state.folderReducer.error,
