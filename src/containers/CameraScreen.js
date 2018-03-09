@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import base64js from 'base64-js'
 import axios from 'axios'
 import { create } from 'apisauce'
-import { upLoadVideo, setAccount, setNull } from '../actions'
+import { upLoadVideo, setAccount, setNull , getFolder, getICameraFolder} from '../actions'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
 // import Modal from "react-native-modal"
@@ -70,20 +70,39 @@ class CameraScreen extends React.Component {
     if (newProps.progress) {
       Reactotron.log('progress')
       Reactotron.log(newProps.progress)
-      this.setState({ progress: newProps.progress, isModalProgress: true })
-    }
-    if (newProps && newProps.videoData) {
-      if (newProps.videoData.error && newProps.videoData.error.message === 'Invalid Credentials') {
-        Reactotron.log('w')
-        this.setState({ isModalProgress: false, failedLogin: true, isModalLogin: true, isLoading: false, isModalProgress: false })
+      if (!newProps.fetching) {
+        this.setState({ isModalProgress: false })
+      } else {
+        this.setState({ progress: newProps.progress, isModalProgress: true })
       }
-      if (newProps.videoData && newProps.videoData.length !== 0) {
-        Reactotron.log('newProps.videoData')
-        Reactotron.log(newProps.videoData)
+    }
+
+    if (this.state.isUploading && !newProps.fetching) {
+      this.setState({isUploading: false})
+      if (newProps.isSuccess) {
+        // Reactotron.log('RCP')
+        // Reactotron.log(newProps.videoData)
         this.setState({ videoData: newProps.videoData[0], isLoading: false, isModalProgress: false })
-        alert(`Upload success \n with id file: ${newProps.videoData[0].id} \n name: ${newProps.videoData[0].name}`)
+        alert(`Upload success \n with id file: ${newProps.videoData.data.id} \n name: ${newProps.videoData.data.name}`)
+      } else {
+        alert (`err: ${newProps.error}`)
       }
     }
+
+    // if ()
+    // if (newProps && newProps.videoData) {
+    //   if (newProps.videoData.error && newProps.videoData.error.message === 'Invalid Credentials') {
+    //     Reactotron.log('w')
+    //     this.setState({ isModalProgress: false, failedLogin: true, isModalLogin: true, isLoading: false, isModalProgress: false })
+    //   }
+    //   if (newProps.videoData && newProps.videoData.length !== 0) {
+    //     Reactotron.log('newProps.videoData')
+    //     Reactotron.log(newProps.videoData)
+    //     this.setState({ videoData: newProps.videoData[0], isLoading: false, isModalProgress: false })
+    //     alert(`Upload success \n with id file: ${newProps.videoData[0].id} \n name: ${newProps.videoData[0].name}`)
+    //     this.props.setNull()
+    //   }
+    // }
 
 
   }
@@ -197,11 +216,15 @@ class CameraScreen extends React.Component {
 
   async handleSigninGoogle() {
     this.setState({ isLoading: true })
+    Reactotron.log('1 Sc Cam handleSigninGoogle')
     try {
       await GoogleSignin.signIn().then((user) => {
-        // console.log(user)
-        // Reactotron.log(user)
+        Reactotron.log('2 Sc Cam handleSigninGoogle')
+        Reactotron.log(user)
         this.props.setAccount(user)
+        // this.props.getFolder(user.accessToken)
+        this.props.getICameraFolder(user.accessToken)
+        
         this.setState({ isModalLogin: false, token: user.accessToken, isLoading: false })
       })
       // await this.props.navigation.navigate('CameraScreen')
@@ -213,20 +236,21 @@ class CameraScreen extends React.Component {
 
   onUploadPress(token) {
     const { videoName, path, isVideoFile } = this.state
+    const {iCamFolder} = this.props
     // Reactotron.log('pppp')
     // Reactotron.log(path)
     const arrPath = path.split(".", 2)
     const pathString = arrPath[1]
     // Reactotron.log('pppp')
     // Reactotron.log(pathString)
-    this.props.setNull()
+    // this.props.setNull()
     if (videoName === '') {
       alert('please input your file name!')
       return
     }
     // const fileType = isVideoFile ? 'mp4' : 'jpeg'
-    this.setState({ isModalInputName: false })
-    this.props.onUpVideo(token, path, videoName, pathString)
+    this.setState({ isModalInputName: false, isUploading: true })
+    this.props.onUpVideo(token, path, videoName, pathString, iCamFolder)
     // this.props.onUpVideo(token, path, videoName, fileType)
   }
 
@@ -380,15 +404,22 @@ const mapStateToProps = (state) => {
   return {
     account: state.accountReducer,
     videoData: state.videoReducer,
-    progress: state.progressReducer
+    progress: state.progressReducer,
+    folder: state.folderReducer,
+    fetching: state.videoReducer.fetching,
+    isSuccess: state.videoReducer.isSuccess,
+    error: state.videoReducer.error,
+    iCamFolder: state.folderReducer.iCamFolder
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUpVideo: (token, video, videoName, fileType) => { dispatch(upLoadVideo(token, video, videoName, fileType)) },
+    onUpVideo: (token, video, videoName, fileType, parent) => { dispatch(upLoadVideo(token, video, videoName, fileType, parent)) },
     setAccount: (account) => { dispatch(setAccount(account)) },
-    setNull: () => {dispatch(setNull())}
+    // setNull: () => {dispatch(setNull())},
+    getFolder: (account) => { dispatch(getFolder(account)) },
+    getICameraFolder: (account) => { dispatch(getICameraFolder(account)) }
   }
 }
 

@@ -1,4 +1,5 @@
-import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT, UP_PROGRESS, SET_NULL } from './actionTypes'
+import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT, UP_PROGRESS, SET_NULL, CREATE_FOLDER,
+  GET_FOLDER, GET_ICAMERA_FOLDER } from './actionTypes'
 import Reactotron from 'reactotron-react-native'
 
 export const setToken = () => {
@@ -23,13 +24,14 @@ export const setNull = () => {
   }
 }
 
-export const upLoadVideo = (token, video, videoName, fileType) => {
+export const upLoadVideo = (token, video, videoName, fileType, parent) => {
   return {
     type: UP_VIDEO,
     token,
     video,
     videoName,
-    fileType
+    fileType,
+    parent
   }
 }
 
@@ -40,9 +42,26 @@ export const upVideoSuccessAction = (video) => {
   }
 }
 
-// export const getProgress = (progress) => {
-//   return {
-//     type: UP_PROGRESS,
-//     progress
-//   }
-// }
+export const createFolder = (token, folderName, parent) => {
+  return {
+    type: CREATE_FOLDER,
+    token,
+    folderName,
+    parent
+  }
+}
+
+export const getFolder = (token, parent) => {
+  return {
+    type: GET_FOLDER,
+    token,
+    parent
+  }
+}
+
+export const getICameraFolder = (token) => {
+  return {
+    type: GET_ICAMERA_FOLDER,
+    token
+  }
+}
