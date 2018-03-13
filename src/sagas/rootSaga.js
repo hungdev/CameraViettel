@@ -5,8 +5,8 @@ import { watchUpVideo } from './cameraSaga'
 import { watchCreateFolder, watchGetFolder, watchGetICameraFolder } from './folderSaga'
 
 export default function * rootSaga () {
-  // yield call(watchUpVideo)
-  // yield call(watchCreateFolder)
+	// yield call(watchUpVideo)
+	// yield call(watchCreasteFolder)
   yield [
     fork(watchUpVideo),
     fork(watchCreateFolder),
