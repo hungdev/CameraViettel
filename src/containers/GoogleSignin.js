@@ -40,8 +40,6 @@ class GoogleSignIn extends Component {
       shouldFetchBasicProfile: true
     })
     if (account && account.accessToken) {
-      // Reactotron.log('iiiiiic')
-      // Reactotron.log(this.props.iCamFolder)
       this.setState({ isGetFolder: true })
       this.props.getFolder(account.accessToken, this.props.iCamFolder)
     }
@@ -87,8 +85,8 @@ class GoogleSignIn extends Component {
       // Reactotron.log('newProps folder GG')
       // Reactotron.log(newProps.folders)
       this.setState({ folders: newProps.folders, folderSelected: newProps.folders[0].id })
-      Reactotron.log('iiiiiiddddd')
-      Reactotron.log(newProps.folders[0].id)
+      // Reactotron.log('iiiiiiddddd')
+      // Reactotron.log(newProps.folders[0].id)
       this.props.setSelectedFolder(newProps.folders[0].id)
     }
   }
@@ -163,7 +161,12 @@ class GoogleSignIn extends Component {
   }
 
   onSearch () {
-
+    const { account, iCamFolder } = this.props
+    Reactotron.log('eeeeex')
+    Reactotron.log(this.state.specialEmail)
+    const specialEmail = this.state.specialEmail ? this.state.specialEmail : null
+    this.setState({ isGetFolder: true })
+    this.props.getFolder(account.accessToken, iCamFolder, specialEmail)
   }
 
   render () {
@@ -192,8 +195,8 @@ class GoogleSignIn extends Component {
               autoFocus
               placeholder='Email share with special person'
               // placeholderTextColor='white'
-              value={this.state.search}
-              onChangeText={(text) => this.setState({ search: text })}
+              value={this.state.specialEmail}
+              onChangeText={(text) => this.setState({ specialEmail: text })}
               autoCapitalize='none'
               onSubmitEditing={() => this.onSearch()}
               returnKeyType={'search'}
@@ -298,7 +301,7 @@ const mapDispatchToProps = (dispatch) => {
     setAccount: (account) => { dispatch(setAccount(account)) },
     setLogout: () => { dispatch(setLogout()) },
     createFolder: (account, folderName, parent) => { dispatch(createFolder(account, folderName, parent)) },
-    getFolder: (account, parent) => { dispatch(getFolder(account, parent)) },
+    getFolder: (account, parent, specialEmail) => { dispatch(getFolder(account, parent, specialEmail)) },
     getICameraFolder: (account) => { dispatch(getICameraFolder(account)) },
     setSelectedFolder: (folder) => { dispatch(setSelectedFolder(folder)) }
   }

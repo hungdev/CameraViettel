@@ -25,8 +25,6 @@ export const setNull = () => {
 }
 
 export const upLoadVideo = (token, video, videoName, fileType, parent) => {
-  Reactotron.log('Action..upLoadVideo')
-  Reactotron.log(parent)
   return {
     type: UP_VIDEO,
     token,
@@ -53,11 +51,12 @@ export const createFolder = (token, folderName, parent) => {
   }
 }
 
-export const getFolder = (token, parent) => {
+export const getFolder = (token, parent, specialEmail) => {
   return {
     type: GET_FOLDER,
     token,
-    parent
+    parent,
+    specialEmail
   }
 }
 

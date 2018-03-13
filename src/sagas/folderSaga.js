@@ -39,7 +39,7 @@ function * getFolder (action) {
   Reactotron.log('Saga getFolder')
   Reactotron.log(action)
   try {
-    const result = yield Api.getFolderFromApi(action.token, action.parent)
+    const result = yield Api.getFolderFromApi(action.token, action.parent, action.specialEmail)
     if (result && result.respInfo.status === 200) {
       const data = JSON.parse(result.data)
       yield put({ type: GET_FOLDER_SUCCEEDED, folder: data.files })

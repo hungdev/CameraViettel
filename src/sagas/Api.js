@@ -84,8 +84,9 @@ function getICameraFolder (token) {
   })
 }
 
-function getFolderFromApi (token, parent) {
-  return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='${parent}' in parents and trashed=false and mimeType='application/vnd.google-apps.folder' and 'littlepjg@gmail.com' in writers`, {
+function getFolderFromApi (token, parent, specialEmail) {
+  const qwerty = specialEmail ? `and '${specialEmail}' in writers` : ''
+  return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='${parent}' in parents and trashed=false and mimeType='application/vnd.google-apps.folder' ${qwerty}`, {
   // return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false and 'littlepjg@gmail.com' in writers`, {
     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
