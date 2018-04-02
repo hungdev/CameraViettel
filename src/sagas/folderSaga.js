@@ -1,7 +1,8 @@
 import {
   CREATE_FOLDER, CREATE_FOLDER_SUCCEEDED, CREATE_FOLDER_FAILED, GET_FOLDER,
   GET_FOLDER_SUCCEEDED, GET_FOLDER_FAILED, GET_ICAMERA_FOLDER, GET_ICAMERA_FOLDER_SUCCEEDED,
-  GET_ICAMERA_FOLDER_FAILED
+  GET_ICAMERA_FOLDER_FAILED, SHARE_TO_EMAIL, SHARE_TO_EMAIL_SUCCEEDED,
+  SHARE_TO_EMAIL_FAILED
 } from '../actions/actionTypes'
 
 import { put, takeLatest, call } from 'redux-saga/effects'
@@ -74,4 +75,23 @@ function * getICameraFolder (action) {
 export function * watchGetICameraFolder () {
   Reactotron.log('SwatchCreateFolder')
   yield takeLatest(GET_ICAMERA_FOLDER, getICameraFolder)
+}
+
+function * shareFolderToEmail (action) {
+  Reactotron.log('Saga getICameraFolder')
+  Reactotron.log(action)
+  try {
+    const result = yield Api.requestShareFolderToEmail(action.token, action.idFolder, action.emailShare)
+    // Reactotron.log('sg Icam')
+    // Reactotron.log(result)
+    yield put({ type: SHARE_TO_EMAIL_SUCCEEDED, emailShared: result })
+  } catch (error) {
+    Reactotron.log('error')
+    Reactotron.log(error)
+    yield put({ type: SHARE_TO_EMAIL_FAILED, error })
+  }
+}
+export function * watchShareFolderToEmail () {
+  Reactotron.log('SwatchCreateFolder')
+  yield takeLatest(SHARE_TO_EMAIL, shareFolderToEmail)
 }

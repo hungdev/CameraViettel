@@ -87,7 +87,7 @@ function getICameraFolder (token) {
 function getFolderFromApi (token, parent, specialEmail) {
   const qwerty = specialEmail ? `and '${specialEmail}' in writers` : ''
   return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='${parent}' in parents and trashed=false and mimeType='application/vnd.google-apps.folder' ${qwerty}`, {
-  // return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false and 'littlepjg@gmail.com' in writers`, {
+    // return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false and 'littlepjg@gmail.com' in writers`, {
     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
     'mimeType': 'application/vnd.google-apps.folder'
@@ -98,9 +98,33 @@ function getFolderFromApi (token, parent, specialEmail) {
   })
 }
 
+// https://developers.google.com/drive/v3/reference/permissions/create#request
+function requestShareFolderToEmail (token, idFolder, emailShare) {
+  Reactotron.log('requestShareFolderToEmail')
+  Reactotron.log(token)
+  Reactotron.log(idFolder)
+  Reactotron.log(emailShare)
+  // const qwerty = specialEmail ? `and '${specialEmail}' in writers` : ''
+  return RNFetchBlob.fetch('POST', `https://www.googleapis.com/drive/v3/files/${idFolder}/permissions`, {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+    JSON.stringify({
+      'role': 'writer', // owner, writer, commenter, reader
+      'type': 'user',
+      'emailAddress': `${emailShare}`
+    }))
+    .then((res) => {
+      Reactotron.log('call Api shared with specical email')
+      Reactotron.log(res)
+      return res
+    })
+}
+
 export const Api = {
   upVideoFromApi,
   createFolderFromApi,
   getFolderFromApi,
-  getICameraFolder
+  getICameraFolder,
+  requestShareFolderToEmail
 }
