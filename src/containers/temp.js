@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StatusBar, StyleSheet, TouchableOpacity, View, Text, Modal, TextInput, KeyboardAvoidingView } from 'react-native';
+import { Image, StatusBar, StyleSheet, TouchableOpacity, View, Text, Modal, TextInput } from 'react-native';
 import Camera from 'react-native-camera';
 import styles from './styles/styles'
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -17,7 +17,6 @@ import RNThumbnail from 'react-native-thumbnail'
 // import ProgressCircle from 'react-native-progress-circle'
 import * as Progress from 'react-native-progress'
 import ModalPicker from './ModalPicker'
-import ModalInputFileName from './ModalInputFileName'
 
 
 class CameraScreen extends React.Component {
@@ -83,6 +82,8 @@ class CameraScreen extends React.Component {
     if (this.state.isUploading && !newProps.fetching) {
       this.setState({ isUploading: false })
       if (newProps.isSuccess) {
+        // Reactotron.log('RCP')
+        // Reactotron.log(newProps.videoData)
         this.setState({ videoData: newProps.videoData[0], isLoading: false, isModalProgress: false, isGetFolder: true })
         alert(`Upload success \n with id file: ${newProps.videoData.data.id} \n name: ${newProps.videoData.data.name}`)
         this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
@@ -93,6 +94,9 @@ class CameraScreen extends React.Component {
 
     if (this.state.isGetICamera && !newProps.iFetching) {
       this.setState({ isGetICamera: false, isGetFolder: true })
+      // Reactotron.log('aaaaac')
+      // Reactotron.log(newProps.iCamFolder)
+
       this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
     }
 
@@ -247,12 +251,12 @@ class CameraScreen extends React.Component {
   }
 
 
-  onPressUpload(fileName) {
-    const { item } = this.state
+  onUploadPress() {
+    const { videoName, path, isVideoFile } = this.state
     const { iCamFolder, account, selectedFolder } = this.props
-    const arrPath = item.node.type.split("/", 2)
+    const arrPath = path.split(".", 2)
     const pathString = arrPath[1]
-    if (fileName === '') {
+    if (videoName === '') {
       alert('please input your file name!')
       return
     }
@@ -261,31 +265,37 @@ class CameraScreen extends React.Component {
     const parent = selectedFolder ? selectedFolder : iCamFolder
     //path: đường dẫn
     // pathString là đuôi file
-    var path = item.node.image.uri
-    this.refs.ModalInputName.onClose()
-    this.props.onUpVideo(account.accessToken, path, fileName, pathString, parent)
+    this.props.onUpVideo(account.accessToken, path, videoName, pathString, parent)
     // this.props.onUpVideo(token, path, videoName, fileType)
   }
 
-  // onPressPreview() {
-  //   const { path, isModalVisible } = this.state
-  //   // if (path) {
-  //   //   this.setState({ isModalVisible: !isModalVisible })
-  //   // } else alert('Please take a picture or record video!')
+  onPressPreview() {
+    const { path, isModalVisible } = this.state
+    // if (path) {
+    //   this.setState({ isModalVisible: !isModalVisible })
+    // } else alert('Please take a picture or record video!')
 
-  //   this.refs.ModalPicker.onOpen()
+    this.refs.ModalPicker.onOpen()
 
 
-  // }
-
-  onSelectedItem(item) {
-    this.refs.ModalInputName.onOpen ()
-    this.refs.ModalPicker.onClose()
-    this.setState({ item})
   }
 
-  onUpload() {
-
+  onSelectedItem (item) {
+    Reactotron.log('iiiiiii')
+    Reactotron.log(item)
+    // const { videoName, path, isVideoFile } = this.state
+    // var path = item.node.image.uri
+    // const { iCamFolder, account, selectedFolder } = this.props
+    // const arrPath = path.split(".", 2)
+    // const pathString = arrPath[1]
+    // if (videoName === '') {
+    //   alert('please input your file name!')
+    //   return
+    // }
+    // // const fileType = isVideoFile ? 'mp4' : 'jpeg'
+    // this.setState({ isModalInputName: false, isUploading: true })
+    // const parent = selectedFolder ? selectedFolder : iCamFolder
+    // this.props.onUpVideo(account.accessToken, path, videoName, pathString, parent)
   }
 
   render() {
@@ -389,14 +399,35 @@ class CameraScreen extends React.Component {
           </View>
         </ModalBox>
 
-        
-        <ModalInputFileName
-          ref='ModalInputName'
-          onPressUpload={(fileName) => this.onPressUpload(fileName)}
-        />
+        <ModalBox
+          style={styles.modalInputName}
+          swipeToClose={false}
+          position={"center"}
+          // startOpen={true}
+          isOpen={this.state.isModalInputName}>
+          <View style={styles.contentModalInput}>
+            <Text style={styles.txtHeaderModalInput}>Please input your file name to upload</Text>
+            <TextInput
+              style={styles.inputStyle}
+              onChangeText={(text) => this.setState({ videoName: text })}
+              value={this.state.videoName}
+              underlineColorAndroid='transparent'
+              placeholder='Input your file name'
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20, paddingHorizontal: 20 }}>
+              <TouchableOpacity onPress={() => this.onUploadPress(this.state.token)}>
+                <Image source={require('../assets/icUploadNew.png')} style={{ height: 50, width: 50 }} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.setState({ isModalInputName: false })}>
+                <Image source={require('../assets/icCancelNew.png')} style={{ height: 40, width: 40 }} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ModalBox>
+
         <ModalPicker
           ref='ModalPicker'
-          onSelectedItem={(item) => this.onSelectedItem(item)}
+          onSelectedItem={(item)=> this.onSelectedItem(item)}
         />
       </View>
     );

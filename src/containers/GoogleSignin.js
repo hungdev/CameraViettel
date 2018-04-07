@@ -10,6 +10,7 @@ import Toast from 'react-native-root-toast'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Foundation from 'react-native-vector-icons/Foundation'
 import MCIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import ModalInputFolderName from './ModalInputFolderName'
 
 class GoogleSignIn extends Component {
   constructor (props) {
@@ -48,6 +49,7 @@ class GoogleSignIn extends Component {
   }
 
   componentWillReceiveProps (newProps) {
+    this.forceUpdate()
     const { account } = this.props
     Reactotron.log(' RCP google sigin')
     Reactotron.log(newProps)
@@ -57,6 +59,7 @@ class GoogleSignIn extends Component {
 
     if (this.state.isCreateFolder && !newProps.fetching) {
       this.setState({ isCreateFolder: false })
+      this.refs.ModalInputFolderName.onClose()
       if (newProps.isSuccess) {
         this.setState({ isGetFolder: true })
         this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
@@ -124,10 +127,10 @@ class GoogleSignIn extends Component {
     }, 1000)
   }
 
-  onCreateFolder () {
+  onCreateFolder (folderName) {
     const { account, iCamFolder } = this.props
-    const { folderName } = this.state
-    this.setState({ isModalInputName: false, isCreateFolder: true })
+    // const { folderName } = this.state
+    this.setState({ isCreateFolder: true })
     this.props.createFolder(account.accessToken, folderName, iCamFolder)
   }
 
@@ -176,6 +179,10 @@ class GoogleSignIn extends Component {
     this.props.shareToEmail(account.accessToken, idFolder, emailShare)
   }
 
+  onOpenFolderInputName () {
+    this.refs.ModalInputFolderName.onOpen()
+  }
+
   render () {
     const { account } = this.props
     const { folders } = this.state
@@ -222,7 +229,7 @@ class GoogleSignIn extends Component {
             keyExtractor={item => item.id}
           />
           <View style={styles.rowBottom}>
-            <TouchableOpacity style={[styles.warpAddButton]} onPress={() => this.setState({ isModalInputName: !this.state.isModalInputName })}>
+            <TouchableOpacity style={[styles.warpAddButton]} onPress={() => this.onOpenFolderInputName()}>
               <Foundation name='folder-add' size={50} color='black' />
             </TouchableOpacity>
             <TouchableOpacity style={[styles.warpAddButton]} onPress={() => this.onClipboard()}>
@@ -289,16 +296,19 @@ class GoogleSignIn extends Component {
             />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20, paddingHorizontal: 20 }}>
               <TouchableOpacity onPress={() => this.onShareEmail()}>
-                {/* <Image source={require('../assets/icUploadNew.png')} style={{ height: 50, width: 50 }} /> */}
                 <Ionicons name='ios-create' size={40} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.setState({ isModalInputEmail: false })}>
                 <MCIcons name='cancel' size={35} />
-                {/* <Image source={require('../assets/icCancelNew.png')} style={{ height: 40, width: 40 }} /> */}
               </TouchableOpacity>
             </View>
           </View>
         </ModalBox>
+
+        <ModalInputFolderName
+          ref='ModalInputFolderName'
+          onCreate={(folderName) => this.onCreateFolder(folderName)}
+        />
       </View>
     )
   }
