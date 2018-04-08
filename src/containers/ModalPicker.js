@@ -36,6 +36,7 @@ export default class ModalPicker extends Component {
         <View style={{ flex: 1, justifyContent: 'center' }}>
           <MediaPicker
             numPhotos={20}
+            numVideos={20}
             onCancel={() => this.setState({visible: false})}
             onSelectedItem={(item) => this.props.onSelectedItem(item)}
           />

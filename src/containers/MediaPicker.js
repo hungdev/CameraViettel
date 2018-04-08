@@ -133,7 +133,7 @@ export default class MediaHelper extends Component<{}> {
     const { arrVideos, arrPhotos, item } = this.state
     const { imageMargin, imagesPerRow } = this.props
 
-    var arrMedia = _.orderBy(_.concat(arrPhotos, arrVideos), 'node.timestamp')
+    var arrMedia = _.orderBy(_.concat(arrPhotos, arrVideos), 'node.timestamp').reverse()
 
     return (
       <View style={styles.container}>

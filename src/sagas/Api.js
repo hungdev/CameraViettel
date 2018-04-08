@@ -55,32 +55,33 @@ function createFolderFromApi (token, folderName, parent) {
   })
 }
 
-function getICameraFolder (token) {
+export function getICameraFolder (token) {
   return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='root' in parents and trashed=false`, {
     Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json'
   }).then((res) => {
-    if (res && JSON.parse(res.data).files) {
-      const data = JSON.parse(res.data).files
-      // Reactotron.log(JSON.parse(res.data).files)
-      var findIcam = _.find(data, { name: 'ICamera' })
-      if (findIcam === undefined) {
-        RNFetchBlob.fetch('POST', 'https://www.googleapis.com/drive/v3/files/', {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }, JSON.stringify({
-          name: `ICamera`,
-          mimeType: 'application/vnd.google-apps.folder'
-        })).then((res) => {
-          Reactotron.log(JSON.parse(res.data).id)
-          return res
-        })
-      } else {
-        return findIcam.id
-      }
+    // if (res && JSON.parse(res.data).files) {
+    const data = JSON.parse(res.data).files
+    // Reactotron.log(JSON.parse(res.data).files)
+    var findIcam = _.find(data, { name: 'ICamera' })
+    if (findIcam === undefined) {
+      return RNFetchBlob.fetch('POST', 'https://www.googleapis.com/drive/v3/files/', {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }, JSON.stringify({
+        name: `ICamera`,
+        mimeType: 'application/vnd.google-apps.folder'
+      })).then((res) => {
+        Reactotron.log('API have not Icam')
+        Reactotron.log(JSON.parse(res.data).id)
+        return JSON.parse(res.data).id
+      })
+    } else {
+      return findIcam.id
     }
-    Reactotron.log('fin')
-    return res
+    // }
+    // Reactotron.log('fin')
+    // return res
   })
 }
 
