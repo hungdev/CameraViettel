@@ -2,12 +2,12 @@ import {
   CREATE_FOLDER_SUCCEEDED, CREATE_FOLDER_FAILED, SET_LOGOUT, GET_FOLDER_SUCCEEDED,
   GET_FOLDER_FAILED, GET_ICAMERA_FOLDER_SUCCEEDED, GET_ICAMERA_FOLDER_FAILED, CREATE_FOLDER,
   GET_ICAMERA_FOLDER, GET_FOLDER, SET_SELECTED_FOLDER, SHARE_TO_EMAIL, SHARE_TO_EMAIL_SUCCEEDED,
-  SHARE_TO_EMAIL_FAILED
+  SHARE_TO_EMAIL_FAILED, GET_FILE_IN_FOLDER, GET_FILE_IN_FOLDER_SUCCEEDED, GET_FILE_IN_FOLDER_FAILED
 } from '../actions/actionTypes'
 import Reactotron from 'reactotron-react-native'
 
 const initialState = {
-  data: [],
+  createFolderData: null,
   folders: [],
   iCamFolder: null,
   isSuccess: null,
@@ -15,6 +15,7 @@ const initialState = {
   fetching: false,
   selectedFolder: null,
   emailShared: null,
+  fileInFolder: null,
   // iCamFetching: false,
   error: null
 }
@@ -24,9 +25,9 @@ const folderReducers = (state = initialState, action) => {
     case SET_LOGOUT:
       return []
     case CREATE_FOLDER:
-      return { ...state, data: [], fetching: true, isSuccess: null }
+      return { ...state, createFolderData: null, fetching: true, isSuccess: null }
     case CREATE_FOLDER_SUCCEEDED:
-      return { ...state, fetching: false, data: action.folder, isSuccess: true }
+      return { ...state, fetching: false, createFolderData: action.folder, isSuccess: true }
     case CREATE_FOLDER_FAILED:
       return { ...state, fetching: false, error: action.error }
 
@@ -35,6 +36,13 @@ const folderReducers = (state = initialState, action) => {
     case GET_FOLDER_SUCCEEDED:
       return { ...state, fetching: false, folders: action.folder, isSuccess: true }
     case GET_FOLDER_FAILED:
+      return { ...state, fetching: false, error: action.error }
+
+    case GET_FILE_IN_FOLDER:
+      return { ...state, fileInFolder: null, fetching: true, isSuccess: null }
+    case GET_FILE_IN_FOLDER_SUCCEEDED:
+      return { ...state, fetching: false, fileInFolder: action.fileInFolder, isSuccess: true }
+    case GET_FILE_IN_FOLDER_FAILED:
       return { ...state, fetching: false, error: action.error }
 
     case GET_ICAMERA_FOLDER:

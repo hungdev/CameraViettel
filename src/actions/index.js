@@ -1,5 +1,5 @@
 import { SET_TOKEN, UP_SUCCEEDED, UP_VIDEO, SET_ACCOUNT, SET_LOGOUT, UP_PROGRESS, SET_NULL, CREATE_FOLDER,
-  GET_FOLDER, GET_ICAMERA_FOLDER, SET_SELECTED_FOLDER, SHARE_TO_EMAIL } from './actionTypes'
+  GET_FOLDER, GET_ICAMERA_FOLDER, SET_SELECTED_FOLDER, SHARE_TO_EMAIL, GET_FILE_IN_FOLDER } from './actionTypes'
 import Reactotron from 'reactotron-react-native'
 
 export const setToken = () => {
@@ -57,6 +57,13 @@ export const getFolder = (token, parent, specialEmail) => {
     token,
     parent,
     specialEmail
+  }
+}
+export const getFileInfolder = (token, parent) => {
+  return {
+    type: GET_FILE_IN_FOLDER,
+    token,
+    parent
   }
 }
 

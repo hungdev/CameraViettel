@@ -98,6 +98,18 @@ function getFolderFromApi (token, parent, specialEmail) {
   })
 }
 
+function getFileInFolderFromApi (token, parent) {
+  return RNFetchBlob.fetch('GET', `https://www.googleapis.com/drive/v3/files?q='${parent}' in parents and trashed=false and mimeType != 'application/vnd.google-apps.folder'`, {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+    // 'mimeType': 'application/vnd.google-apps.folder'
+  }).then((res) => {
+    Reactotron.log('call Api get getFileInFolderFromApi')
+    Reactotron.log(res)
+    return res
+  })
+}
+
 // https://developers.google.com/drive/v3/reference/permissions/create#request
 function requestShareFolderToEmail (token, idFolder, emailShare) {
   Reactotron.log('requestShareFolderToEmail')
@@ -126,5 +138,6 @@ export const Api = {
   createFolderFromApi,
   getFolderFromApi,
   getICameraFolder,
-  requestShareFolderToEmail
+  requestShareFolderToEmail,
+  getFileInFolderFromApi
 }

@@ -11,6 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import Foundation from 'react-native-vector-icons/Foundation'
 import MCIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import ModalInputFolderName from './ModalInputFolderName'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 class GoogleSignIn extends Component {
   constructor (props) {
@@ -58,12 +59,16 @@ class GoogleSignIn extends Component {
     }
 
     if (this.state.isCreateFolder && !newProps.fetching) {
-      this.setState({ isCreateFolder: false })
+      this.setState({ isCreateFolder: false, isLoading: false })
       this.refs.ModalInputFolderName.onClose()
       if (newProps.isSuccess) {
-        this.setState({ isGetFolder: true })
-        this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
-        alert('create folder success')
+        if (newProps.createFolderData) {
+          this.setState({ isGetFolder: true, folderSelected: newProps.createFolderData.id })
+          this.props.setSelectedFolder(newProps.createFolderData.id)
+          this.props.shareToEmail(account.accessToken, newProps.createFolderData.id, 'hungns126@gmail.com')
+          this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
+          alert('create folder success')
+        }
       } else {
         alert(`err: ${newProps.error}`)
       }
@@ -79,12 +84,13 @@ class GoogleSignIn extends Component {
     }
 
     if (newProps.folders && newProps.folders.length !== 0) {
-      this.setState({ folders: newProps.folders, folderSelected: newProps.folders[0].id })
-      this.props.setSelectedFolder(newProps.folders[0].id)
+      // this.setState({ folders: newProps.folders, folderSelected: newProps.folders[0].id })
+      this.setState({ folders: newProps.folders })
+      // this.props.setSelectedFolder(newProps.folders[0].id)
     }
 
     if (this.state.isShareToEmail && !newProps.fetching) {
-      this.setState({isShareToEmail: false})
+      this.setState({ isShareToEmail: false })
       if (newProps.emailShared.respInfo.status === 200) {
         alert('Share success')
       }
@@ -106,19 +112,7 @@ class GoogleSignIn extends Component {
       shadow: true,
       animation: true,
       hideOnPress: true,
-      delay: 0,
-      onShow: () => {
-        // calls on toast\`s appear animation start
-      },
-      onShown: () => {
-        // calls on toast\`s appear animation end.
-      },
-      onHide: () => {
-        // calls on toast\`s hide animation start.
-      },
-      onHidden: () => {
-        // calls on toast\`s hide animation end.
-      }
+      delay: 0
     })
 
     // You can manually hide the Toast, or it will automatically disappear after a `duration` ms timeout.
@@ -130,18 +124,18 @@ class GoogleSignIn extends Component {
   onCreateFolder (folderName) {
     const { account, iCamFolder } = this.props
     // const { folderName } = this.state
-    this.setState({ isCreateFolder: true })
+    this.setState({ isCreateFolder: true, isLoading: true })
     this.props.createFolder(account.accessToken, folderName, iCamFolder)
   }
 
   onSelectFolder (item) {
-    if (item.id === this.state.folderSelected) {
-      this.setState({ folderSelected: this.props.iCamFolder })
-      this.props.setSelectedFolder(this.props.iCamFolder)
-    } else {
-      this.setState({ folderSelected: item.id })
-      this.props.setSelectedFolder(item.id)
-    }
+    // if (item.id === this.state.folderSelected) {
+    //   this.setState({ folderSelected: this.props.iCamFolder })
+    //   this.props.setSelectedFolder(this.props.iCamFolder)
+    // } else {
+    this.setState({ folderSelected: item.id })
+    this.props.setSelectedFolder(item.id)
+    // }
   }
 
   renderFolders (item) {
@@ -152,7 +146,7 @@ class GoogleSignIn extends Component {
           <View style={styles.folderNameStyle}>
             <Text>{item.name}</Text>
           </View>
-          <TouchableOpacity onPress={() => this.setState({isModalInputEmail: !this.state.isModalInputEmail, idFolder: item.id})}>
+          <TouchableOpacity onPress={() => this.setState({ isModalInputEmail: !this.state.isModalInputEmail, idFolder: item.id })}>
             <Ionicons name='md-share' size={30} style={{ marginRight: 30 }} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.onSelectFolder(item)}>
@@ -173,9 +167,9 @@ class GoogleSignIn extends Component {
   }
 
   onShareEmail () {
-    const {emailShare, idFolder} = this.state
+    const { emailShare, idFolder } = this.state
     const { account } = this.props
-    this.setState({isModalInputEmail: false, isShareToEmail: true})
+    this.setState({ isModalInputEmail: false, isShareToEmail: true })
     this.props.shareToEmail(account.accessToken, idFolder, emailShare)
   }
 
@@ -309,6 +303,7 @@ class GoogleSignIn extends Component {
           ref='ModalInputFolderName'
           onCreate={(folderName) => this.onCreateFolder(folderName)}
         />
+        <Spinner visible={this.state.isLoading} textContent={'Loading...'} textStyle={{color: '#FFF'}} />
       </View>
     )
   }
@@ -336,7 +331,7 @@ const mapStateToProps = (state) => {
     isSuccess: state.folderReducer.isSuccess,
     emailShared: state.folderReducer.emailShared,
     error: state.folderReducer.error,
-
+    createFolderData: state.folderReducer.createFolderData,
     folders: state.folderReducer.folders
 
   }

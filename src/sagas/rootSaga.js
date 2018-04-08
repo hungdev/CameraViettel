@@ -2,16 +2,20 @@
 import { fork } from 'redux-saga/effects'
 import { call, all } from 'redux-saga/effects'
 import { watchUpVideo } from './cameraSaga'
-import { watchCreateFolder, watchGetFolder, watchGetICameraFolder, watchShareFolderToEmail } from './folderSaga'
+import {
+  watchCreateFolder, watchGetFolder, watchGetICameraFolder,
+  watchShareFolderToEmail, watchGetFileInFolder
+} from './folderSaga'
 
 export default function * rootSaga () {
-	// yield call(watchUpVideo)
-	// yield call(watchCreasteFolder)
+  // yield call(watchUpVideo)
+  // yield call(watchCreasteFolder)
   yield [
     fork(watchUpVideo),
     fork(watchCreateFolder),
     fork(watchGetFolder),
     fork(watchGetICameraFolder),
-    fork(watchShareFolderToEmail)
+    fork(watchShareFolderToEmail),
+    fork(watchGetFileInFolder)
   ]
 }

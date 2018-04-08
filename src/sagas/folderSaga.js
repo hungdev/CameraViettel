@@ -2,7 +2,7 @@ import {
   CREATE_FOLDER, CREATE_FOLDER_SUCCEEDED, CREATE_FOLDER_FAILED, GET_FOLDER,
   GET_FOLDER_SUCCEEDED, GET_FOLDER_FAILED, GET_ICAMERA_FOLDER, GET_ICAMERA_FOLDER_SUCCEEDED,
   GET_ICAMERA_FOLDER_FAILED, SHARE_TO_EMAIL, SHARE_TO_EMAIL_SUCCEEDED,
-  SHARE_TO_EMAIL_FAILED
+  SHARE_TO_EMAIL_FAILED, GET_FILE_IN_FOLDER, GET_FILE_IN_FOLDER_SUCCEEDED, GET_FILE_IN_FOLDER_FAILED
 } from '../actions/actionTypes'
 
 import { put, takeLatest, call } from 'redux-saga/effects'
@@ -56,6 +56,29 @@ function * getFolder (action) {
 export function * watchGetFolder () {
   Reactotron.log('SwatchCreateFolder')
   yield takeLatest(GET_FOLDER, getFolder)
+}
+
+// GET FILE IN FOLDER
+function * getFileInFolder (action) {
+  Reactotron.log('Saga getFolder')
+  Reactotron.log(action)
+  try {
+    const result = yield Api.getFileInFolderFromApi(action.token, action.parent)
+    if (result && result.respInfo.status === 200) {
+      const data = JSON.parse(result.data)
+      yield put({ type: GET_FILE_IN_FOLDER_SUCCEEDED, fileInFolder: data.files })
+    } else {
+      yield put({ type: GET_FILE_IN_FOLDER_FAILED, folder: 'Unknown Error' })
+    }
+  } catch (error) {
+    Reactotron.log('error')
+    Reactotron.log(error)
+    yield put({ type: GET_FOLDER_FAILED, video: error })
+  }
+}
+export function * watchGetFileInFolder () {
+  Reactotron.log('SwatchCreateFolder')
+  yield takeLatest(GET_FILE_IN_FOLDER, getFileInFolder)
 }
 
 function * getICameraFolder (action) {

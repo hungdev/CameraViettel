@@ -6,7 +6,7 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import base64js from 'base64-js'
 import axios from 'axios'
 import { create } from 'apisauce'
-import { upLoadVideo, setAccount, setNull, getFolder, getICameraFolder } from '../actions'
+import { upLoadVideo, setAccount, setNull, getFolder, getICameraFolder, getFileInfolder } from '../actions'
 import { connect } from 'react-redux'
 import Reactotron from 'reactotron-react-native'
 // import Modal from "react-native-modal"
@@ -18,6 +18,8 @@ import RNThumbnail from 'react-native-thumbnail'
 import * as Progress from 'react-native-progress'
 import ModalPicker from './ModalPicker'
 import ModalInputFileName from './ModalInputFileName'
+import _ from 'lodash'
+import Toast from 'react-native-root-toast'
 
 
 class CameraScreen extends React.Component {
@@ -83,9 +85,18 @@ class CameraScreen extends React.Component {
     if (this.state.isUploading && !newProps.fetching) {
       this.setState({ isUploading: false })
       if (newProps.isSuccess) {
-        this.setState({ videoData: newProps.videoData[0], isLoading: false, isModalProgress: false, isGetFolder: true })
-        alert(`Upload success \n with id file: ${newProps.videoData.data.id} \n name: ${newProps.videoData.data.name}`)
-        this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
+        this.setState({ isLoading: false, isModalProgress: false, isGetFolder: true, isGetFileInfolder: true })
+        // alert(`Upload success \n with id file: ${newProps.videoData.data.id} \n name: ${newProps.videoData.data.name}`)
+        Toast.show(`Upload success with file name: ${newProps.videoData.data.name}`, {
+          duration: Toast.durations.LONG,
+          position: Toast.positions.CENTER,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0
+        })
+        this.props.getFileInfolder (newProps.account.accessToken, newProps.selectedFolder)
+        // this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
       } else {
         alert(`err: ${newProps.error}`)
       }
@@ -100,6 +111,36 @@ class CameraScreen extends React.Component {
       this.setState({ isGetFolder: false })
       // Reactotron.log('ffff')
       // Reactotron.log(newProps)
+    }
+
+    if (this.state.isGetFileInfolder && !newProps.iFetching) {
+      this.setState({isGetFileInfolder: false})
+      Reactotron.log('rcp isGetFileInfolder')
+      Reactotron.log(newProps.fileInFolder)
+      Reactotron.log('sttttt')
+      Reactotron.log(this.state.fileType)
+      let sortType = _.filter(newProps.fileInFolder, e =>  {
+        let splitType = e.mimeType.split("/", 2)
+        let fileType = splitType[0]
+        if (this.state.fileType === fileType) {
+          return e
+        } 
+      })
+      if (this.state.fileType === 'video') {
+        if (sortType.length < 4) {
+          alert(`bạn cần upload ít nhất 4 video, hiện tại mới có ${sortType.length} video`)
+        } else {
+          alert('Hoàn tất thủ tục các thao tác cần thiết để bán xe')
+        }
+      }
+      if (this.state.fileType === 'image') {
+        if (sortType.length < 3) {
+          alert(`bạn cần upload ít nhất 3 ảnh, hiện tại mới có ${sortType.length} ảnh`)
+        } else {
+          alert('Hoàn tất thủ tục các thao tác cần thiết để bán xe')
+        }
+      }
+      this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
     }
 
     // if ()
@@ -252,40 +293,38 @@ class CameraScreen extends React.Component {
     const { iCamFolder, account, selectedFolder } = this.props
     const arrPath = item.node.type.split("/", 2)
     const pathString = arrPath[1]
+    const fileType = arrPath[0]
     if (fileName === '') {
       alert('please input your file name!')
       return
     }
     // const fileType = isVideoFile ? 'mp4' : 'jpeg'
-    this.setState({ isModalInputName: false, isUploading: true })
+    this.setState({ isModalInputName: false, isUploading: true, fileType })
     const parent = selectedFolder ? selectedFolder : iCamFolder
     //path: đường dẫn
     // pathString là đuôi file
+    // fileType là loại file: image hoặc video
     var path = item.node.image.uri
     this.refs.ModalInputName.onClose()
     this.props.onUpVideo(account.accessToken, path, fileName, pathString, parent)
     // this.props.onUpVideo(token, path, videoName, fileType)
   }
 
-  // onPressPreview() {
-  //   const { path, isModalVisible } = this.state
-  //   // if (path) {
-  //   //   this.setState({ isModalVisible: !isModalVisible })
-  //   // } else alert('Please take a picture or record video!')
-
-  //   this.refs.ModalPicker.onOpen()
-
-
-  // }
 
   onSelectedItem(item) {
-    this.refs.ModalInputName.onOpen ()
+    this.refs.ModalInputName.onOpen()
     this.refs.ModalPicker.onClose()
-    this.setState({ item})
+    this.setState({ item })
   }
 
-  onUpload() {
-
+  onPressPreview() {
+    const { iCamFolder, account, selectedFolder } = this.props
+    if (selectedFolder) {
+      this.refs.ModalPicker.onOpen()
+    } else {
+      alert('Bạn phải tạo hoặc chọn folder bên tab Profile để upload')
+      return
+    }
   }
 
   render() {
@@ -321,7 +360,7 @@ class CameraScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={[styles.overlay, styles.bottomOverlay]}>
-          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.refs.ModalPicker.onOpen()}>
+          <TouchableOpacity style={styles.warpPreviewAfter} onPress={() => this.onPressPreview()}>
             <Image source={thumbnail} style={styles.previewAfterStyle} />
           </TouchableOpacity>
           {(!this.state.isRecording && (
@@ -389,7 +428,7 @@ class CameraScreen extends React.Component {
           </View>
         </ModalBox>
 
-        
+
         <ModalInputFileName
           ref='ModalInputName'
           onPressUpload={(fileName) => this.onPressUpload(fileName)}
@@ -408,7 +447,6 @@ const mapStateToProps = (state) => {
     account: state.accountReducer,
     videoData: state.videoReducer,
     progress: state.progressReducer,
-    // folder: state.folderReducer,
     fetching: state.videoReducer.fetching,
     isSuccess: state.videoReducer.isSuccess,
     error: state.videoReducer.error,
@@ -417,7 +455,8 @@ const mapStateToProps = (state) => {
     iIsSuccess: state.folderReducer.isSuccess,
     iError: state.folderReducer.error,
     folders: state.folderReducer.folders,
-    selectedFolder: state.folderReducer.selectedFolder
+    selectedFolder: state.folderReducer.selectedFolder,
+    fileInFolder: state.folderReducer.fileInFolder
   }
 }
 
@@ -425,9 +464,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onUpVideo: (token, video, videoName, fileType, parent) => { dispatch(upLoadVideo(token, video, videoName, fileType, parent)) },
     setAccount: (account) => { dispatch(setAccount(account)) },
-    // setNull: () => {dispatch(setNull())},
     getFolder: (account, parent) => { dispatch(getFolder(account, parent)) },
-    getICameraFolder: (account) => { dispatch(getICameraFolder(account)) }
+    getICameraFolder: (account) => { dispatch(getICameraFolder(account)) },
+    getFileInfolder: (token, parent) => { dispatch(getFileInfolder(token, parent)) }
   }
 }
 
