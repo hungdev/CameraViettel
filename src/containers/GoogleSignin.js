@@ -65,7 +65,7 @@ class GoogleSignIn extends Component {
         if (newProps.createFolderData) {
           this.setState({ isGetFolder: true, folderSelected: newProps.createFolderData.id })
           this.props.setSelectedFolder(newProps.createFolderData.id)
-          this.props.shareToEmail(account.accessToken, newProps.createFolderData.id, 'hungns126@gmail.com')
+          this.props.shareToEmail(account.accessToken, newProps.createFolderData.id, 'phambinht1hvt@gmail.com')
           this.props.getFolder(newProps.account.accessToken, newProps.iCamFolder)
           alert('create folder success')
         }
